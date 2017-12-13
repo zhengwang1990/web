@@ -5,9 +5,9 @@
 	<h1>欢迎来到Lili的主页</h1>
 	<p>十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧</p>
 	<p> 
-		<i class="fa fa-weixin fa-lg" aria-hidden="true"></i> &nbsp; weixinid12345 
+		<i class="fa fa-weixin fa-lg" aria-hidden="true"></i> &nbsp; weixinid12345
 		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-		<i class="fa fa-phone fa-lg" aria-hidden="true"></i> &nbsp; 12345789 
+		<i class="fa fa-phone fa-lg" aria-hidden="true"></i> &nbsp; 12345789
 	</p>
 	</header>
  
@@ -24,7 +24,7 @@
 					<% profile.images.forEach(function(image, j){ %>
 						<div class="col-lg-4 col-md-6 col-sm-12">
 							<p> <a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
-								<img src="<%= image %>" class="img-thumbnail">								
+								<img src="<%= image %>" class="img-thumbnail">
 							</a> </p>
 						</div>
 					<% }); %>
@@ -32,12 +32,12 @@
 			</div>
 		</div>
 		<br>
-	<% }); %> 
+	<% }); %>
 </div>
 
 
 <% profiles.forEach(function(profile, i){ %>
-	<% profile.images.forEach(function(image, j){ %>				
+	<% profile.images.forEach(function(image, j){ %>
 		<div class="lightbox-target" id="<%= "pic" + String(i) + "_" + String(j) %>">
 			<img src="<%= image %>" class="img-thumbnail">
 			<a class="lightbox-close" href="#"></a>
