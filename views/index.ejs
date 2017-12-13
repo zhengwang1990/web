@@ -15,44 +15,34 @@
 		公告
 	</div>
 	
-	<% for(var i=0; i<2; i++){ %>
+	<% profiles.forEach(function(profile, i){ %>
 		<div class="card">
-			<h4 class="card-header">标题</h4>
+			<h4 class="card-header"> <%= profile.name %> </h4>
 			<div class="card-body">
-				<h4 class="card-title">介绍文字，啊介绍介绍</h4>
+				<h4 class="card-title"> <%= profile.description %> </h4>
 				<div class="row text-center">
-					<% for(var j=0; j<5; j++){ %>
+					<% profile.images.forEach(function(image, j){ %>
 						<div class="col-lg-4 col-md-6 col-sm-12">
-							<p>
-								<a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
-								<% if (i==0) {%>
-								<img src="https://static.pexels.com/photos/160933/girl-rabbit-friendship-love-160933.jpeg" class="img-thumbnail">
-								<% }else { %>
-								<img src="http://www.mangauk.com/gallery/albums/album-19/lg/fairy_tail_1.jpg" class="img-thumbnail">
-								<% }; %>
-								</a>
-							</p>
+							<p> <a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
+								<img src="<%= image %>" class="img-thumbnail">								
+							</a> </p>
 						</div>
-					<% }; %>
+					<% }); %>
 				</div>
 			</div>
 		</div>
 		<br>
-	<% }; %> 
+	<% }); %> 
 </div>
 
 
-<% for(var i=0; i<2; i++){ %>
-	<% for(var j=0; j<5; j++){ %>						
+<% profiles.forEach(function(profile, i){ %>
+	<% profile.images.forEach(function(image, j){ %>				
 		<div class="lightbox-target" id="<%= "pic" + String(i) + "_" + String(j) %>">
-			<% if (i==0) {%>
-			<img src="https://static.pexels.com/photos/160933/girl-rabbit-friendship-love-160933.jpeg" class="img-thumbnail">
-			<% }else { %>
-			<img src="http://www.mangauk.com/gallery/albums/album-19/lg/fairy_tail_1.jpg" class="img-thumbnail">
-			<% }; %>
+			<img src="<%= image %>" class="img-thumbnail">
 			<a class="lightbox-close" href="#"></a>
 		</div>
-	<% }; %>
-<% }; %>
+	<% }); %>
+<% }); %>
 
 <% include footer.ejs %> 

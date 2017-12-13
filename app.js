@@ -1,15 +1,32 @@
 var express     = require("express"),
     app         = express(),
-    bodyParser  = require("body-parser"),
     mongoose    = require("mongoose"),
-    methodOverride = require("method-override")
+    bodyParser  = require("body-parser"),
+    methodOverride = require("method-override");
     
+// seed
+var seedDB      = require("./seeds");
+ 
+// database
+var Profile = require("./models/profile");
+ 
+mongoose.connect("mongodb://localhost/develop", {
+  useMongoClient: true,
+});
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
 
+seedDB();
+
 app.get("/", function(req, res, err){
-	res.render("index.ejs");
+	Profile.find({}, function(err, profiles){
+		if (err) {
+			console.log(err);
+		} else {
+			res.render("index.ejs", {profiles:profiles});
+		}
+	});
 });
 
 if (module === require.main) {
