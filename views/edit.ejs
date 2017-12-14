@@ -1,0 +1,58 @@
+<% include header.ejs %>
+ 
+<div class="container">
+	<h1> 新建资料 </h1>
+	<div class="form-group">
+		<form action="/<%= profile._id %>?_method=PUT" method="POST">
+ 			<div class="card">
+  				<h4 class="card-header simhei"> 基本信息 </h4>
+  				<div class="card-body">
+    				<label for="name">姓名</label>
+ 				    <input type="text" class="form-control" id="name" name="profile[name]" value=<%= profile.name %> >
+ 				    <br>
+ 				    <label for="description">简介</label>
+ 				    <textarea  class="form-control" rows="3" id="description" name="profile[description]"><%= profile.description %></textarea>
+		 		</div>
+		 	</div>
+		 	<br>
+		 	<div class="card">
+  				<h4 class="card-header simhei">  照片 </h4>
+  				<div class="card-body">
+		 			<!--display photos-->
+		 			<div class="row text-center" id="photo_row">
+		 				<% profile.images.forEach(function(image, j){ %>
+							<div class="col-lg-4 col-md-6 col-sm-12">
+								<p> <img src="<%= image %>" class="img-thumbnail"> </p>
+								<p> <button class="btn btn-danger btn-sm" type="button">删除</button> </p>
+							</div>
+						<% }); %>
+					</div>
+					<br>
+					
+					<div class="progress">
+						<div class="progress-bar" role="progressbar"></div>
+		 			</div>
+		 			<br>
+		 			<div class="text-center">
+						<button class="btn btn-primary btn-sm upload-btn" type="button">上传照片</button>
+					</div>
+				</div>
+			</div>
+			<input id="images" name="profile[images]" type="hidden">
+			<div class="bottom-buttons">
+				<div style="display:inline">
+					<input type="submit" class="btn btn-success" value="修改资料">
+				</div>
+				<span class="hspace"></span>
+				<a href="admin" class="btn btn-info"> 返回管理页面 </a>
+			<div>
+		 </form>
+	</div>		
+ </div>
+ 
+ <input id="upload-input" type="file" name="uploads[]"></br>
+ <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+ <script src="/javascripts/upload.js"></script>
+ 
+<% include footer.ejs %>

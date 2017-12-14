@@ -1,0 +1,56 @@
+<% include header.ejs %>
+
+<div class="container">
+	<header class="jumbotron text-center">
+		<h1 class="simhei">管理页面</h1>
+	</header>
+	
+ 	<div class="form-group">
+ 		<div class="card">
+  			<h4 class="card-header simhei"> 基本信息 </h4>
+  			<div class="card-body">
+  				<p> 微信号: <%= info.wechat %> </p>
+  				<p> 电话号码: <%= info.phone %> </p>
+  				<p> 公告： <br> <%= info.notice %> </p>
+				<p> 显示公告： <% if (info.show_notice) { %> 是 <% } else { %> 否 <% } %></p>
+				<hr>
+				<div class="text-center">
+					<a href="info_update" class="btn btn-success btn-sm"> 修改基本信息 </a>
+				</div>
+		 	</div>
+		 </div>
+ 	</div>
+	
+	<% profiles.forEach(function(profile, i){ %>
+		<div class="card" id="<%= profile._id %>">
+			<h4 class="card-header simhei"> <%= profile.name %> </h4>
+			<div class="card-body">
+				<h4 class="card-title simsun"> <%= profile.description %> </h4>
+				<div class="row text-center">
+					<% profile.images.forEach(function(image, j){ %>
+						<div class="col-lg-4 col-md-6 col-sm-12">
+							<p> <img src="<%= image %>" class="img-thumbnail"> </p>
+						</div>
+					<% }); %>
+				</div>
+				<hr>
+				<div class="text-center">
+					<a href="/edit/<%= profile._id %>" class="btn btn-success btn-sm"> 修改资料 </a>
+					<span class="hspace"></span>
+					<form action="/<%= profile._id %>?_method=DELETE" method="POST" style="display:inline">
+						<input type="submit" class="btn btn-danger btn-sm" value="删除资料">
+					</form>
+				</div>
+			</div>
+		</div>
+		<br>
+	<% }); %>
+	
+	<div class="bottom-buttons" style="margin-bottom:2em">
+		<a href="new" class="btn btn-success"> 新建资料 </a>
+		<span class="hspace"></span>
+		<a href="/" class="btn btn-info"> 返回首页 </a>
+	<div>
+</div>
+
+<% include footer.ejs %> 
