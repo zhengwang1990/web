@@ -2,30 +2,34 @@
 
 <div class="container">
 	<header class="jumbotron text-center">
-	<h1>欢迎来到Lili的主页</h1>
-	<p>十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧</p>
-	<p> 
-		<i class="fa fa-weixin fa-lg" aria-hidden="true"></i> &nbsp; weixinid12345
-		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-		<i class="fa fa-phone fa-lg" aria-hidden="true"></i> &nbsp; 12345789
-	</p>
+		<h1 class="simhei">欢迎来到Lili的主页</h1>
+		<p class="kaiti">十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧</p>
+		<p> 
+			<i class="fa fa-weixin fa-lg" aria-hidden="true"></i> &nbsp; <%= info.wechat %>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<i class="fa fa-phone fa-lg" aria-hidden="true"></i> &nbsp; <%= info.phone %>
+		</p>
 	</header>
  
-	<div class="alert alert-info" role="alert">
-		公告
-	</div>
+ 	<% if (info.show_notice) { %>
+	 	<div class="alert alert-info" role="alert">
+			<span class="simsun"> <%= info.notice %> </span>
+		</div>
+	<% } %>
 	
 	<% profiles.forEach(function(profile, i){ %>
 		<div class="card">
-			<h4 class="card-header"> <%= profile.name %> </h4>
+			<h4 class="card-header simhei"> <%= profile.name %> </h4>
 			<div class="card-body">
-				<h4 class="card-title"> <%= profile.description %> </h4>
+				<h4 class="card-title simsun"> <%= profile.description %> </h4>
 				<div class="row text-center">
 					<% profile.images.forEach(function(image, j){ %>
 						<div class="col-lg-4 col-md-6 col-sm-12">
-							<p> <a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
-								<img src="<%= image %>" class="img-thumbnail">
-							</a> </p>
+							<p id="<%= "para" + String(i) + "_" + String(j) %>">
+								<a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
+									<img src="<%= image %>" class="img-thumbnail">
+								</a>
+							</p>
 						</div>
 					<% }); %>
 				</div>
@@ -40,7 +44,7 @@
 	<% profile.images.forEach(function(image, j){ %>
 		<div class="lightbox-target" id="<%= "pic" + String(i) + "_" + String(j) %>">
 			<img src="<%= image %>" class="img-thumbnail">
-			<a class="lightbox-close" href="#"></a>
+			<a class="lightbox-close" href="#<%= "para" + String(i) + "_" + String(j) %>"></a>
 		</div>
 	<% }); %>
 <% }); %>

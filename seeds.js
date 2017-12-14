@@ -1,8 +1,10 @@
 var Profile = require("./models/profile");
+var Info = require("./models/info");
+
 var data = [
     {
-        name: "Pikachu", 
-        description: "Pikachu are a species of Pokémon, fictional creatures that appear in an assortment of video games, animated television shows and movies, trading card games, and comic books licensed by The Pokémon Company, a Japanese corporation.",
+        name: "皮卡丘", 
+        description: "日本任天堂公司开发的掌机游戏系列《精灵宝可梦》和根据它改编的动画中登场的虚构角色神奇宝贝中的一种。皮卡丘被选为2014年巴西世界杯日本官方吉祥物。",
         images: [
         	"https://i.pinimg.com/736x/76/47/9d/76479dd91dc55c2768ddccfc30a4fbf5--pikachu-halloween-costume-diy-halloween-costumes.jpg",
         	"https://static.zerochan.net/Pikachu.full.1659646.jpg",
@@ -11,8 +13,8 @@ var data = [
     	]
     },
     {
-        name: "Wall-E", 
-        description: "WALL-E, short for Waste Allocation Load Lifter Earth-class, is the last robot left on Earth. He spends his days tidying up the planet, one piece of garbage at a time.",
+        name: "瓦力", 
+        description: "《机器人瓦力》（英语：WALL-E）是2008年一部由皮克斯动画工作室制作、华特迪士尼视频出版的计算机动画科幻电影，由安德鲁·史丹顿编导。故事描述地球上的清扫型机器人瓦力爱上了女机器人伊芙后，跟随她进入太空历险的故事。",
         images: [
         	"https://dp1eoqdp1qht7.cloudfront.net/community/migrated/ab0/d3d/346938/image",
         	"https://vignette.wikia.nocookie.net/pixar/images/c/ce/Wall-E_Cubecolors.jpg/revision/latest?cb=20090615011459",
@@ -32,6 +34,12 @@ var data = [
     },
 ];
 
+var info_data = {
+	wechat: "weixin12345",
+	phone: "123456789",
+	notice: "江南皮革厂倒闭了。老板带着小姨子跑了。现在全部大甩卖。",
+	show_notice: true
+};
 
 function seedDB(){
 	Profile.remove({}, function(err){
@@ -41,6 +49,15 @@ function seedDB(){
         	addData();
         }
     });
+    /*
+    Info.remove({}, function(err){
+        if (err) {
+            console.log(err);
+        } else {
+        	addInfo();
+        }
+    });
+    */
 }
 
 function addData(){
@@ -53,4 +70,11 @@ function addData(){
 	});
 }
 
+function addInfo(){
+	Info.create(info_data, function(err, info){
+		if (err){
+			console.log(err);
+		}
+	});
+}
 module.exports = seedDB;
