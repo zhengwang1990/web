@@ -74,7 +74,8 @@ $("#upload-input").on("change", function(){
 function reloadpage(data){
 	$(".progress-bar").text("0%");
     $(".progress-bar").width("0%");
-    $("#photo_row").append('<div class="col-lg-4 col-md-6 col-sm-12">\n' +
+    console.log(data);
+    $("#photo_row").append('<div class="col-lg-6 col-md-12">\n' +
                            '<p> <img src="' + data + '" class="img-thumbnail"> </p> \n'+
-                           '<p> <button class="btn btn-danger btn-sm" type="button">删除</button> </p> </div>');
+                           '<p> <button class="btn btn-danger btn-lg" type="button">删除</button> </p> </div>');
 }

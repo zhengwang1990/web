@@ -1,6 +1,7 @@
-<% include header.ejs %>
+<% include partials/header.ejs %>
+
 <div class="container">
-	<h1> 更新基本信息 </h1>
+	<h1 class="top-h1"> 更新基本信息 </h1>
 	<div class="form-group">
 		<form action="/info_update?_method=PUT" method="POST">
  			<div class="card">
@@ -30,16 +31,15 @@
 			</div>
 			<div class="bottom-buttons">
 				<div style="display:inline">
-					<input type="submit" class="btn btn-success" value="修改信息">
+					<input type="submit" class="btn btn-success btn-xlg" value="修改信息">
 				</div>
 				<span class="hspace"></span>
-				<a href="admin" class="btn btn-info"> 返回管理页面 </a>
+				<a href="admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
+				<span class="hspace"></span>
+				<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
 			<div>
 		 </form>
 	</div>
-	
-	
+</div>
 
- 	
- </div>
-<% include footer.ejs %>
+<% include partials/footer.ejs %> 

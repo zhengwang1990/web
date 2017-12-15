@@ -1,4 +1,4 @@
-<% include header.ejs %>
+<% include partials/header.ejs %>
 
 <div class="container">
 	<header class="jumbotron text-center">
@@ -15,7 +15,7 @@
 				<p> 显示公告： <% if (info.show_notice) { %> 是 <% } else { %> 否 <% } %></p>
 				<hr>
 				<div class="text-center">
-					<a href="info_update" class="btn btn-success btn-sm"> 修改基本信息 </a>
+					<a href="info_update" class="btn btn-success btn-lg"> 修改基本信息 </a>
 				</div>
 		 	</div>
 		 </div>
@@ -28,17 +28,17 @@
 				<h4 class="card-title simsun"> <%= profile.description %> </h4>
 				<div class="row text-center">
 					<% profile.images.forEach(function(image, j){ %>
-						<div class="col-lg-4 col-md-6 col-sm-12">
+						<div class="col-lg-6 col-md-12">
 							<p> <img src="<%= image %>" class="img-thumbnail"> </p>
 						</div>
 					<% }); %>
 				</div>
 				<hr>
 				<div class="text-center">
-					<a href="/edit/<%= profile._id %>" class="btn btn-success btn-sm"> 修改资料 </a>
+					<a href="/edit/<%= profile._id %>" class="btn btn-success btn-lg"> 修改资料 </a>
 					<span class="hspace"></span>
 					<form action="/<%= profile._id %>?_method=DELETE" method="POST" style="display:inline">
-						<input type="submit" class="btn btn-danger btn-sm" value="删除资料">
+						<input type="submit" class="btn btn-danger btn-lg" value="删除资料">
 					</form>
 				</div>
 			</div>
@@ -47,10 +47,12 @@
 	<% }); %>
 	
 	<div class="bottom-buttons" style="margin-bottom:2em">
-		<a href="new" class="btn btn-success"> 新建资料 </a>
+		<a href="new" class="btn btn-success btn-xlg"> 新建资料 </a>
 		<span class="hspace"></span>
-		<a href="/" class="btn btn-info"> 返回首页 </a>
+		<a href="/" class="btn btn-info btn-xlg"> 返回首页 </a>
+		<span class="hspace"></span>
+		<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
 	<div>
 </div>
 
-<% include footer.ejs %> 
+<% include partials/footer.ejs %> 

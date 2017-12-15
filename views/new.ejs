@@ -1,7 +1,7 @@
-<% include header.ejs %>
+<% include partials/header.ejs %>
  
 <div class="container">
-	<h1> 新建资料 </h1>
+	<h1 class="top-h1"> 新建资料 </h1>
 	<div class="form-group">
 		<form action="/new" method="POST">
  			<div class="card">
@@ -28,17 +28,19 @@
 		 			</div>
 		 			<br>
 		 			<div class="text-center">
-						<button class="btn btn-primary btn-sm upload-btn" type="button">上传照片</button>
+						<button class="btn btn-primary btn-lg upload-btn" type="button">上传照片</button>
 					</div>
 				</div>
 			</div>
 			<input id="images" name="profile[images]" type="hidden">
 			<div class="bottom-buttons">
 				<div style="display:inline">
-					<input type="submit" class="btn btn-success" value="提交资料">
+					<input type="submit" class="btn btn-success btn-xlg" value="提交资料">
 				</div>
 				<span class="hspace"></span>
-				<a href="admin" class="btn btn-info"> 返回管理页面 </a>
+				<a href="/admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
+				<span class="hspace"></span>
+				<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
 			<div>
 		 </form>
 	</div>
@@ -50,4 +52,4 @@
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
  <script src="/javascripts/upload.js"></script>
  
-<% include footer.ejs %>
+<% include partials/footer.ejs %>

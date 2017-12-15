@@ -1,5 +1,6 @@
-var Profile = require("./models/profile");
-var Info = require("./models/info");
+var Profile = require("./models/profile"),
+	Info    = require("./models/info"),
+ 	User    = require("./models/user");
 
 var data = [
     {
@@ -57,7 +58,16 @@ function seedDB(){
         	addInfo();
         }
     });
-    */
+   */
+   /*
+   User.remove({}, function(err){
+   		if (err) {
+   			console.log(err);
+   		} else {
+   			addUser();
+   		}
+   });
+   */
 }
 
 function addData(){
@@ -77,4 +87,14 @@ function addInfo(){
 		}
 	});
 }
+
+function addUser(){
+	var newUser = new User({username: "lili"});
+    User.register(newUser, "12345", function(err, user){
+        if(err){
+            console.log(err);
+        }
+    });
+}
+
 module.exports = seedDB;

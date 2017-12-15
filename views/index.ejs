@@ -1,4 +1,4 @@
-<% include header.ejs %>
+<% include partials/header.ejs %>
 
 <div class="container">
 	<header class="jumbotron text-center">
@@ -24,7 +24,7 @@
 				<h4 class="card-title simsun"> <%= profile.description %> </h4>
 				<div class="row text-center">
 					<% profile.images.forEach(function(image, j){ %>
-						<div class="col-lg-4 col-md-6 col-sm-12">
+						<div class="col-lg-6 col-md-12">
 							<p id="<%= "para" + String(i) + "_" + String(j) %>">
 								<a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
 									<img src="<%= image %>" class="img-thumbnail">
@@ -37,16 +37,22 @@
 		</div>
 		<br>
 	<% }); %>
+	
+	<% if(currentUser){ %>
+		<div class="bottom-buttons" style="margin-bottom:1.5em">
+			<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
+		</div>
+	<% } %>
 </div>
 
 
 <% profiles.forEach(function(profile, i){ %>
 	<% profile.images.forEach(function(image, j){ %>
 		<div class="lightbox-target" id="<%= "pic" + String(i) + "_" + String(j) %>">
-			<img src="<%= image %>" class="img-thumbnail">
+			<img src="<%= image %>">
 			<a class="lightbox-close" href="#<%= "para" + String(i) + "_" + String(j) %>"></a>
 		</div>
 	<% }); %>
 <% }); %>
 
-<% include footer.ejs %> 
+<% include partials/footer.ejs %> 
