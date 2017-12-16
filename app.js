@@ -3,7 +3,7 @@ var express        = require("express"),
     mongoose       = require("mongoose"),
     bodyParser     = require("body-parser"),
     methodOverride = require("method-override"),
-//    path           = require('path'),
+    path           = require('path'),
     formidable     = require('formidable'),
     fs             = require('fs'),
     passport       = require("passport"),
@@ -143,55 +143,37 @@ app.post("/new", isLoggedIn, function(req, res){
 });
 
 // upload file route
+// ref: https://coligo.io/building-ajax-file-uploader-with-node/
 app.post("/upload", isLoggedIn, function(req, res){
-  // create an incoming form object
-  var form = new formidable.IncomingForm();
-  var new_name;
+	// create an incoming form object
+	var form = new formidable.IncomingForm();
 	
-  // specify that we want to allow the user to upload multiple files in a single request
-  form.multiples = false;
+	// specify that we want to allow the user to upload multiple files in a single request
+	form.multiples = false;
 
-  // store all uploads in the /uploads directory
-  var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
-  form.uploadDir = "./public/uploads/" + date_str;
+	// store all uploads in the /uploads directory
+	form.uploadDir = "./uploads"
   
-  
-  if (!fs.existsSync(form.uploadDir)){
-    fs.mkdirSync(form.uploadDir);
-  }
+	if (!fs.existsSync(form.uploadDir)){
+		fs.mkdirSync(form.uploadDir);
+	}
 
-  // every time a file has been uploaded successfully,
-  // rename it to it's orignal name
-  form.on("file", function(field, file) {
-  	new_name = file.path + "_" + file.name;
-  	/*
-    fs.rename(file.path, new_name, function(err){
-    	if (err) {
-    		console.log(err);
-		}
-    });
-    */
-    cloudinary.uploader.upload(file.path, function(result) { 
-		console.log(result) 
-	},
-	{
-    	public_id: new_name, 
-    	folder: date_str
+	// every time a file has been uploaded successfully,
+	form.on("file", function(field, file) {
+  		var public_id = path.basename(file.path) + "_" + file.name.replace(/\.[^/.]+$/, "");
+  		var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+    	cloudinary.uploader.upload(file.path, function(result) {
+			res.send(result.secure_url);
+			fs.unlink(file.path);
+		},
+		{
+    		public_id: public_id, 
+    		folder: date_str
+		});
 	});
-  });
 
-  // log any errors that occur
-  form.on("error", function(err) {
-    console.log(err);
-  });
-
-  // once all the files have been uploaded, send a response to the client
-  form.on("end", function(err) {
-    res.send(new_name.slice(6));
-  });
-
-  // parse the incoming request containing the form data
-  form.parse(req);
+	// parse the incoming request containing the form data
+	form.parse(req);
 });
 
 // edit profile GET form
