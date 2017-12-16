@@ -50,7 +50,6 @@ function seedDB(){
         	addData();
         }
     });
-    /*
     Info.remove({}, function(err){
         if (err) {
             console.log(err);
@@ -58,8 +57,6 @@ function seedDB(){
         	addInfo();
         }
     });
-   */
-   /*
    User.remove({}, function(err){
    		if (err) {
    			console.log(err);
@@ -67,7 +64,6 @@ function seedDB(){
    			addUser();
    		}
    });
-   */
 }
 
 function addData(){

@@ -3,14 +3,15 @@ var express        = require("express"),
     mongoose       = require("mongoose"),
     bodyParser     = require("body-parser"),
     methodOverride = require("method-override"),
-    path           = require('path'),
+//    path           = require('path'),
     formidable     = require('formidable'),
     fs             = require('fs'),
     passport       = require("passport"),
     cookieParser   = require("cookie-parser"),
     LocalStrategy  = require("passport-local"),
     session        = require("express-session"),
-    flash          = require("connect-flash");
+    flash          = require("connect-flash"),
+    cloudinary     = require('cloudinary');
     
 // seed
 var seedDB = require("./seeds");
@@ -28,9 +29,16 @@ app.use(session({
 }));
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost/develop", {
+mongoose.connect("mongodb://zhengwang:1990127@cluster0-shard-00-00-nssvf.mongodb.net:27017,cluster0-shard-00-01-nssvf.mongodb.net:27017,cluster0-shard-00-02-nssvf.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin", {
   useMongoClient: true,
 });
+
+cloudinary.config({ 
+  cloud_name: 'zhengwang', 
+  api_key: '797236461388679', 
+  api_secret: 'cn4uJAeJyMnrHVGC5TOksnqtGyM' 
+});
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.use(cookieParser('secret'));
@@ -42,7 +50,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-seedDB();
+//seedDB();
 
 app.use(function(req, res, next){
    res.locals.currentUser = req.user;
@@ -144,8 +152,9 @@ app.post("/upload", isLoggedIn, function(req, res){
   form.multiples = false;
 
   // store all uploads in the /uploads directory
-  date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '')
+  var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
   form.uploadDir = "./public/uploads/" + date_str;
+  
   
   if (!fs.existsSync(form.uploadDir)){
     fs.mkdirSync(form.uploadDir);
@@ -155,11 +164,20 @@ app.post("/upload", isLoggedIn, function(req, res){
   // rename it to it's orignal name
   form.on("file", function(field, file) {
   	new_name = file.path + "_" + file.name;
+  	/*
     fs.rename(file.path, new_name, function(err){
     	if (err) {
     		console.log(err);
 		}
     });
+    */
+    cloudinary.uploader.upload(file.path, function(result) { 
+		console.log(result) 
+	},
+	{
+    	public_id: new_name, 
+    	folder: date_str
+	});
   });
 
   // log any errors that occur
@@ -177,7 +195,7 @@ app.post("/upload", isLoggedIn, function(req, res){
 });
 
 // edit profile GET form
-app.get("/edit/:id", function(req, res){
+app.get("/edit/:id", isLoggedIn, function(req, res){
 	Profile.findById(req.params.id, function(err, profile){
 		if (err) {
 			console.log(err);
