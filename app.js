@@ -7,7 +7,6 @@ var express        = require("express"),
     formidable     = require('formidable'),
     fs             = require('fs'),
     passport       = require("passport"),
-    cookieParser   = require("cookie-parser"),
     LocalStrategy  = require("passport-local"),
     session        = require("express-session"),
     flash          = require("connect-flash"),
@@ -20,14 +19,7 @@ var seedDB = require("./seeds");
 var Profile = require("./models/profile"),
  	Info    = require("./models/info"),
  	User    = require("./models/user");
- 	
-// passport configuration
-app.use(session({
-    secret: "Any text which makes a secret",
-    resave: false,
-    saveUninitialized: false
-}));
-
+ 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://zhengwang:1990127@cluster0-shard-00-00-nssvf.mongodb.net:27017,cluster0-shard-00-01-nssvf.mongodb.net:27017,cluster0-shard-00-02-nssvf.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin", {
   useMongoClient: true,
@@ -41,9 +33,15 @@ cloudinary.config({
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
-app.use(cookieParser('secret'));
 app.use(express.static("public"));
 app.use(flash());
+
+// passport configuration
+app.use(session({
+    secret: "Any text which makes a secret",
+    resave: false,
+    saveUninitialized: false
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
