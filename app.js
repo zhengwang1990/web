@@ -108,8 +108,7 @@ app.get('/admin', isLoggedIn, function(req, res, err){
 		if (err) {
 		    console.log(err);
 		} else {
-		    is_video = checkVideos(profiles);
-		    res.render('admin.ejs', {profiles:profiles, info:info, is_video:is_video});
+		    res.render('admin.ejs', {profiles:profiles, info:info});
 		}
 	    });
 	}
