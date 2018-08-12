@@ -11,7 +11,7 @@
       <div class="card-body">
   	<p> 微信号: <%= info.wechat %> </p>
   	<p> 电话号码: <%= info.phone %> </p>
-  	<p> 公告： <br> <%= info.notice %> </p>
+  	<p> 公告： <div style="margin: 10px 0 10px 0;"></div> <%= info.notice %> </p>
 	<p> 显示公告： <% if (info.show_notice) { %> 是 <% } else { %> 否 <% } %></p>
 	<hr>
 	<div class="text-center">
@@ -57,7 +57,7 @@
 	</li>
       <% } %>
     </ul>
-    <br>
+    <div style="margin: 10px 0 10px 0;"></div>
     <div class="text-center">
       <a href="/edit/<%= profile._id %>" class="btn btn-success btn-lg"> 修改资料 </a>
       <span class="hspace"></span>
@@ -65,9 +65,9 @@
 	<input type="submit" class="btn btn-danger btn-lg" value="删除资料">
       </form>
     </div>
-    <br>
+    <div style="margin: 10px 0 10px 0;"></div>
   </div>
-  <br>
+  <div style="margin: 10px 0 10px 0;"></div>
   <% }); %>
   
   <div class="bottom-buttons" style="margin-bottom:2em">
