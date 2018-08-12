@@ -21,10 +21,12 @@ var Profile = require('./models/profile'),
     User    = require('./models/user');
 
 mongoose.Promise = global.Promise;
-//mongoose.connect('mongodb://zhengwang:1990127@cluster0-shard-00-00-nssvf.mongodb.net:27017,cluster0-shard-00-01-nssvf.mongodb.net:27017,cluster0-shard-00-02-nssvf.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin', {
-//    useMongoClient: true,
-//});
-mongoose.connect('mongodb://localhost/lilihome')
+mongoose.connect('mongodb://zhengwang:1990127@cluster0-shard-00-00-nssvf.mongodb.net:27017,cluster0-shard-00-01-nssvf.mongodb.net:27017,cluster0-shard-00-02-nssvf.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin', {
+    useMongoClient: true,
+});
+mongoose.connect('mongodb://localhost/lilihome', {
+    useMongoClient: true
+});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
@@ -54,18 +56,13 @@ app.use(function(req, res, next){
 
 
 function authorize(filename, filepath, res, callback) {
-    fs.readFile('credentials.json', (err, content) => {
-	if (err) return console.log('Error loading client secret file:', err);
-	const credentials = JSON.parse(content);
-	const {client_secret, client_id, redirect_uris} = credentials.installed;
-	const oAuth2Client = new google.auth.OAuth2(
-	    client_id, client_secret, redirect_uris[0]);
-	fs.readFile('token.json', (err, token) => {
-	    if (err) return console.log('Error loading token file:', err);
-	    oAuth2Client.setCredentials(JSON.parse(token));
-	    callback(oAuth2Client, filename, filepath, res);
-	});
-    });
+    const credentials = JSON.parse(process.env.CREDENTIALS);
+    const {client_secret, client_id, redirect_uris} = credentials.installed;
+    const oAuth2Client = new google.auth.OAuth2(
+	client_id, client_secret, redirect_uris[0]);
+    const token = process.env.TOKEN;
+    oAuth2Client.setCredentials(JSON.parse(token));
+    callback(oAuth2Client, filename, filepath, res);
 }
 
 
@@ -77,22 +74,6 @@ function isLoggedIn(req, res, next) {
     res.redirect('/login');
 }
 
-function checkVideos(profiles){
-    const video_extname = new Set(['mp4', 'avi', 'flv', 'wmv', 'rm', 'mpg', 'mov', 'ogg']);
-    var is_video = [];
-    profiles.forEach(function(profile, i){
-	is_video[i] = []
-	profile.images.forEach(function(image, j){
-	    var ext = image.split('.').slice(-1)[0];
-	    if (video_extname.has(ext)) {
-		is_video[i][j] = true;
-	    } else {
-		is_video[i][j] = false;
-	    }
-	});
-    });
-    return is_video;
-}
 
 // homepage
 app.get('/', function(req, res){
@@ -258,6 +239,7 @@ async function createFile(auth, filename, filepath, res) {
 
 async function createVideo(auth, filename, filepath, res) {
     const youtube = google.youtube({version: 'v3', auth});
+    const filesize = fs.statSync(filepath).size;
     const google_res = await youtube.videos.insert({
 	part: 'id,snippet,status',
 	notifySubscribers: false,
