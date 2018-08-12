@@ -5,7 +5,7 @@ var infoSchema = new mongoose.Schema({
     phone: String,
     notice: String,
     show_notice: Boolean,
-    allow_comments: Boolean
+    allow_comments: Boolean,
 });
 
 module.exports = mongoose.model("Info", infoSchema);

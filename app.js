@@ -12,17 +12,18 @@ var express        = require('express'),
     flash          = require('connect-flash'),
     {google}       = require('googleapis');
 
-// seed
+// seed & init
 var seedDB = require('./seeds');
+var initDB = require('./init');
 
 // database
 var Profile = require('./models/profile'),
     Info    = require('./models/info'),
-    User    = require('./models/user');
+    User    = require('./models/user'),
+    Stat    = require('./models/stat');
 
-mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB, {
-    useMongoClient: true,
+    useNewUrlParser: true
 });
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -42,9 +43,11 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//seedDB();
 
-app.use(function(req, res, next){
+//seedDB();
+initDB();
+
+app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
@@ -64,7 +67,7 @@ function authorize(filename, filepath, res, callback) {
 
 
 function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()){
+    if(req.isAuthenticated()) {
 	return next();
     }
     req.flash('error', '你需要登录才能进行操作');
@@ -73,17 +76,17 @@ function isLoggedIn(req, res, next) {
 
 
 // homepage
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
     const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
 		   '二十四桥明月夜，玉人何处教吹箫 --- 杜牧',
 		   '驰道杨花满御沟，红妆缦绾上青楼 --- 王昌龄',
 		   '香帏风动花入楼，高调鸣筝缓夜愁 --- 王昌龄',
 		   '罗襦宝带为君解，燕歌赵舞为君开 --- 卢照邻'];
-    Profile.find({}, function(err, profiles){
+    Profile.find({}, function(err, profiles) {
 	if (err) {
 	    console.log(err);
 	} else {
-	    Info.findOne({}, function(err, info){
+	    Info.findOne({}, function(err, info) {
 		if (err) {
 		    console.log(err);
 		} else {
@@ -93,19 +96,45 @@ app.get('/', function(req, res){
 	    });
 	}
     });
+    // update stat
+    updateStat();
 });
 
-// admin page
-app.get('/admin', isLoggedIn, function(req, res, err){
-    Profile.find({}, function(err, profiles){
+async function updateStat() {
+    var current = new Date();
+    var today = current.getFullYear()+'/'+(current.getMonth()+1)+'/'+current.getDate()+' UTC';
+    Stat.findOne({}, function(err, stat) {
 	if (err) {
 	    console.log(err);
 	} else {
-	    Info.findOne({}, function(err, info){
+	    value = stat.homepage.get(today);
+	    if (!value) {
+		stat.homepage.set(today, 1);
+	    } else {
+		stat.homepage.set(today, value+1);
+	    }
+	    stat.save();
+	}
+    });    
+}
+
+// admin page
+app.get('/admin', isLoggedIn, function(req, res, err) {
+    Profile.find({}, function(err, profiles) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    Info.findOne({}, function(err, info) {
 		if (err) {
 		    console.log(err);
 		} else {
-		    res.render('admin.ejs', {profiles:profiles, info:info});
+		    Stat.findOne({}, function(err, stat) {
+			if (err) {
+			    console.log(err);
+			} else {
+			    res.render('admin.ejs', {profiles:profiles, info:info, stat: stat});
+			}
+		    });
 		}
 	    });
 	}
@@ -113,8 +142,8 @@ app.get('/admin', isLoggedIn, function(req, res, err){
 });
 
 // edit info GET form
-app.get('/info_update', isLoggedIn, function(req, res){
-    Info.findOne({}, function(err, info){
+app.get('/info_update', isLoggedIn, function(req, res) {
+    Info.findOne({}, function(err, info) {
 	if (err) {
 	    console.log(err);
 	} else {
@@ -124,10 +153,10 @@ app.get('/info_update', isLoggedIn, function(req, res){
 });
 
 // update info PUT route
-app.put('/info_update', isLoggedIn, function(req, res){
-    Info.findOne({}, function(err, info){
+app.put('/info_update', isLoggedIn, function(req, res) {
+    Info.findOne({}, function(err, info) {
 	req.body.info.show_notice = Boolean(req.body.info.show_notice);
-	info.update(req.body.info, function(err, updated_info){
+	info.update(req.body.info, function(err, updated_info) {
 	    if (err) {
 		console.log(err);
 	    }
@@ -137,12 +166,12 @@ app.put('/info_update', isLoggedIn, function(req, res){
 });
 
 // create NEW profile GET form
-app.get('/new', isLoggedIn, function(req, res){
+app.get('/new', isLoggedIn, function(req, res) {
     res.render('new.ejs');
 });
 
 // create NEW profile post route
-app.post('/new', isLoggedIn, function(req, res){
+app.post('/new', isLoggedIn, function(req, res) {
     if (req.body.profile.images) {
 	req.body.profile.images = req.body.profile.images.split(';');
     } else {
@@ -153,7 +182,7 @@ app.post('/new', isLoggedIn, function(req, res){
     } else {
 	req.body.profile.videos = [];
     }
-    Profile.create(req.body.profile, function(err){
+    Profile.create(req.body.profile, function(err) {
 	if (err) {
 	    console.log(err);
 	} else {
@@ -164,7 +193,7 @@ app.post('/new', isLoggedIn, function(req, res){
 
 // upload file route
 // ref: https://coligo.io/building-ajax-file-uploader-with-node/
-app.post('/upload_image', isLoggedIn, function(req, res){
+app.post('/upload_image', isLoggedIn, function(req, res) {
     // create an incoming form object
     var form = new formidable.IncomingForm();
     
@@ -187,7 +216,7 @@ app.post('/upload_image', isLoggedIn, function(req, res){
     form.parse(req);
 });
 
-app.post('/upload_video', isLoggedIn, function(req, res){
+app.post('/upload_video', isLoggedIn, function(req, res) {
     // create an incoming form object
     var form = new formidable.IncomingForm();
     
@@ -197,7 +226,7 @@ app.post('/upload_video', isLoggedIn, function(req, res){
     // store all uploads in the /uploads directory
     form.uploadDir = './uploads'
     
-    if (!fs.existsSync(form.uploadDir)){
+    if (!fs.existsSync(form.uploadDir)) {
 	fs.mkdirSync(form.uploadDir);
     }
     
@@ -228,7 +257,9 @@ async function createFile(auth, filename, filepath, res) {
     });
     res.send('https://drive.google.com/uc?id='+google_res.data.id)
     fs.unlink(filepath, (err) => {
-	if (err) throw err;
+	if (err) {
+	    console.log(err);
+	}
     });
 }
 
@@ -253,13 +284,15 @@ async function createVideo(auth, filename, filepath, res) {
     });
     res.send('https://www.youtube.com/embed/'+google_res.data.id)
     fs.unlink(filepath, (err) => {
-	if (err) throw err;
+	if (err) {
+	    console.log(err);
+	}
     });
 }
 
 // edit profile GET form
-app.get('/edit/:id', isLoggedIn, function(req, res){
-    Profile.findById(req.params.id, function(err, profile){
+app.get('/edit/:id', isLoggedIn, function(req, res) {
+    Profile.findById(req.params.id, function(err, profile) {
 	if (err) {
 	    console.log(err);
 	} else {
@@ -269,7 +302,7 @@ app.get('/edit/:id', isLoggedIn, function(req, res){
 });
 
 // update profile PUT route
-app.put('/:id', isLoggedIn, function(req, res){
+app.put('/:id', isLoggedIn, function(req, res) {
     if (req.body.profile.images) {
 	req.body.profile.images = req.body.profile.images.split(';');
     } else {
@@ -280,8 +313,8 @@ app.put('/:id', isLoggedIn, function(req, res){
     } else {
 	req.body.profile.videos = [];
     }
-    Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile){
-    	if(err){
+    Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
+    	if (err) {
     	    console.log(err);
     	} else {
     	    res.redirect('/admin#' + String(req.params.id));
@@ -290,9 +323,9 @@ app.put('/:id', isLoggedIn, function(req, res){
 });
 
 // destroy profile DELETE route
-app.delete('/:id', isLoggedIn, function(req, res){
-    Profile.findByIdAndRemove(req.params.id, function(err){
-	if(err){
+app.delete('/:id', isLoggedIn, function(req, res) {
+    Profile.findByIdAndRemove(req.params.id, function(err) {
+	if (err) {
             console.log(err);
 	} else {
             res.redirect('/admin');
@@ -301,7 +334,7 @@ app.delete('/:id', isLoggedIn, function(req, res){
 });
 
 // show login form
-app.get('/login', function(req, res){
+app.get('/login', function(req, res) {
     res.render('login.ejs'); 
 });
 
@@ -311,10 +344,10 @@ app.post('/login', passport.authenticate('local',
     					     successRedirect: '/admin',
 					     failureRedirect: '/login',
 					     failureFlash: '用户名或密码不正确'
-					 }), function(req, res){});
+					 }), function(req, res) {});
 
 // logout route
-app.get('/logout', function(req, res){
+app.get('/logout', function(req, res) {
     req.logout();
     req.flash('success', '你已经退出登录');
     res.redirect('/');
