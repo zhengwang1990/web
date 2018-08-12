@@ -101,7 +101,7 @@ $(document).ready(function () {
 		$('#tooltip').remove();
 		var x = new Date(item.datapoint[0]),
 		    y = item.datapoint[1];
-		showTooltip(item.pageX, item.pageY, y + ' visitors at ' + (x.getUTCMonth()+1) + '/' + x.getUTCDate());
+		showTooltip(item.pageX, item.pageY, y + '次访问于 ' + (x.getUTCMonth()+1) + '/' + x.getUTCDate());
 	    }
 	} else {
 	    $('#tooltip').remove();
