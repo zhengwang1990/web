@@ -1,9 +1,16 @@
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // =================== [ Images ]==============================================
+var uploading_image = false;
+
 $("#image_row").on("click", "button", function(){
     $(this).parent().parent().remove();
 });
 
 $(".upload-image-btn").on("click", function (){
+    if (uploading_image) {return;}
     $("#upload-image-input").click();
     $("#image-progress-bar").text("0%");
     $("#image-progress-bar").width("0%");
@@ -37,6 +44,8 @@ $("form").submit(function() {
 
 $("#upload-image-input").on("change", function(){
 
+    uploading_image = true;
+    
     var files = $(this).get(0).files;
 
     if (files.length > 0){
@@ -64,19 +73,34 @@ $("#upload-image-input").on("change", function(){
 		var xhr = new XMLHttpRequest();
 
 		// listen to the "progress" event
-		xhr.upload.addEventListener("progress", function(evt) {
+		xhr.upload.addEventListener("progress", async function(evt) {
 
 		    if (evt.lengthComputable) {
 			// calculate the percentage of upload completed
 			var percentComplete = evt.loaded / evt.total;
-			percentComplete = parseInt(percentComplete * 50);
+			percentComplete = parseInt(percentComplete * 45);
 
 			// update the Bootstrap progress bar with the new percentage
 			$("#image-progress-bar").text(percentComplete + "%");
 			$("#image-progress-bar").width(percentComplete + "%");
 		    }
+		    while (uploading_image) {
+			await sleep(1000);
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+				if (uploading_image) {
+				    percentComplete = 45 + Math.round(parseFloat(this.responseText)*0.45);
+				    $("#image-progress-bar").text(percentComplete + "%");
+				    $("#image-progress-bar").width(percentComplete + "%");
+				}
+			    }
+			};
+			xmlHttp.open("GET", '/file_progress?filename='+file.name, true);
+			xmlHttp.send(null);			
+		    }
+		    
 		}, false);
-
 		return xhr;
 	    }
 	});
@@ -85,6 +109,7 @@ $("#upload-image-input").on("change", function(){
 });
 
 function reloadimage(data){
+    uploading_image = false;
     $("#image-progress-bar").text("0%");
     $("#image-progress-bar").width("0%");
     $("#image_row").append('<div class="col-lg-6 col-md-12">\n' +
@@ -93,12 +118,14 @@ function reloadimage(data){
 }
 
 // =================== [ Videos ]==============================================
+var uploading_video = false;
 
 $("#video_row").on("click", "button", function(){
     $(this).parent().parent().remove();
 });
 
 $(".upload-video-btn").on("click", function (){
+    if (uploading_video) {return;}
     $("#upload-video-input").click();
     $("#video-progress-bar").text("0%");
     $("#video-progress-bar").width("0%");
@@ -106,6 +133,8 @@ $(".upload-video-btn").on("click", function (){
 
 $("#upload-video-input").on("change", function(){
 
+    uploading_video = true;
+    
     var files = $(this).get(0).files;
 
     if (files.length > 0){
@@ -133,17 +162,34 @@ $("#upload-video-input").on("change", function(){
 		var xhr = new XMLHttpRequest();
 
 		// listen to the "progress" event
-		xhr.upload.addEventListener("progress", function(evt) {
+		xhr.upload.addEventListener("progress", async function(evt) {
 
 		    if (evt.lengthComputable) {
 			// calculate the percentage of upload completed
 			var percentComplete = evt.loaded / evt.total;
-			percentComplete = parseInt(percentComplete * 50);
+			percentComplete = parseInt(percentComplete * 45);
 
 			// update the Bootstrap progress bar with the new percentage
 			$("#video-progress-bar").text(percentComplete + "%");
 			$("#video-progress-bar").width(percentComplete + "%");
 		    }
+
+		    while (uploading_video) {
+			await sleep(1000);
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+				if (uploading_video) {
+				    percentComplete = 45 + Math.round(parseFloat(this.responseText)*0.45);
+				    $("#video-progress-bar").text(percentComplete + "%");
+				    $("#video-progress-bar").width(percentComplete + "%");
+				}
+			    }
+			};
+			xmlHttp.open("GET", '/file_progress?filename='+file.name, true);
+			xmlHttp.send(null);			
+		    }
+
 		}, false);
 
 		return xhr;
@@ -154,6 +200,7 @@ $("#upload-video-input").on("change", function(){
 });
 
 function reloadvideo(data){
+    uploading_video = false
     $("#video-progress-bar").text("0%");
     $("#video-progress-bar").width("0%");
     $("#video_row").append('<div class="col-lg-12">\n' +

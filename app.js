@@ -20,12 +20,11 @@ var Profile = require('./models/profile'),
     Info    = require('./models/info'),
     User    = require('./models/user');
 
+var file_progress = {}
+
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://zhengwang:1990127@cluster0-shard-00-00-nssvf.mongodb.net:27017,cluster0-shard-00-01-nssvf.mongodb.net:27017,cluster0-shard-00-02-nssvf.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin', {
+mongoose.connect(process.env.MONGODB, {
     useMongoClient: true,
-});
-mongoose.connect('mongodb://localhost/lilihome', {
-    useMongoClient: true
 });
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -217,8 +216,20 @@ app.post('/upload_video', isLoggedIn, function(req, res){
     form.parse(req);
 });
 
+app.get('/file_progress', isLoggedIn, function(req, res){
+    if (!file_progress[req.query.filename]){
+	res.send('0');
+    } else {
+	res.send(file_progress[req.query.filename]);
+    }
+});
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function createFile(auth, filename, filepath, res) {
+    const filesize = fs.statSync(filepath).size;
     const drive = google.drive({version: 'v3', auth});
     const google_res = await drive.files.create({
 	requestBody: {
@@ -228,8 +239,14 @@ async function createFile(auth, filename, filepath, res) {
 	media: {
 	    body: fs.createReadStream(filepath)
 	}
+    }, {
+	onUploadProgress: evt => {
+	    const progress = (evt.bytesRead / filesize) * 100;
+	    file_progress[filename] = progress.toString();
+	}
     });
     res.send('https://drive.google.com/uc?id='+google_res.data.id)
+    delete file_progress[filename];
     fs.unlink(filepath, (err) => {
 	if (err) throw err;
     });
@@ -237,8 +254,8 @@ async function createFile(auth, filename, filepath, res) {
 
 
 async function createVideo(auth, filename, filepath, res) {
-    const youtube = google.youtube({version: 'v3', auth});
     const filesize = fs.statSync(filepath).size;
+    const youtube = google.youtube({version: 'v3', auth});
     const google_res = await youtube.videos.insert({
 	part: 'id,snippet,status',
 	notifySubscribers: false,
@@ -253,8 +270,14 @@ async function createVideo(auth, filename, filepath, res) {
 	media: {
 	    body: fs.createReadStream(filepath)
 	}
+    }, {
+	onUploadProgress: evt => {
+	    const progress = (evt.bytesRead / filesize) * 100;
+	    file_progress[filename] = progress.toString();
+	}
     });
     res.send('https://www.youtube.com/embed/'+google_res.data.id)
+    delete file_progress[filename];
     fs.unlink(filepath, (err) => {
 	if (err) throw err;
     });
