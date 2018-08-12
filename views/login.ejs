@@ -1,28 +1,28 @@
 <% include partials/header.ejs %>
 
 <div class="container">
-	<header class="jumbotron text-center">
-		<h1 class="simhei">登录页面</h1>
-	</header>
-	
- 	<div class="form-group">
- 		<form action="/login" method="POST">
-	 		<div class="card">
-	  			<div class="card-body">
-	  				<label for="username">用户名</label>
-	  			  	<input type="text" class="form-control" id="username" name="username" placeholder="用户名">
-	  			  	<br>
-	  			  	<label for="password">密码</label>
-	  			  	<input type="password" class="form-control" id="password" name="password" placeholder="密码">
-					<div class="bottom-buttons">
-						<input type="submit" href="info_update" class="btn btn-primary btn-xlg" value="登录">
-						<span class="hspace"></span>
-						<a href="/" class="btn btn-info btn-xlg"> 返回首页 </a>
-					</div>
-			 	</div>
-			 </div>
-		</form>
- 	</div>
- </div>
+  <header class="jumbotron text-center">
+    <h1 class="simhei">登录页面</h1>
+  </header>
+  
+  <div class="form-group">
+    <form action="/login" method="POST">
+      <div class="card">
+	<div class="card-body">
+	  <label for="username">用户名</label>
+	  <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
+	  <br>
+	  <label for="password">密码</label>
+	  <input type="password" class="form-control" id="password" name="password" placeholder="密码">
+	  <div class="bottom-buttons">
+	    <input type="submit" href="info_update" class="btn btn-primary btn-xlg" value="登录">
+	    <span class="hspace"></span>
+	    <a href="/" class="btn btn-info btn-xlg"> 返回首页 </a>
+	  </div>
+	</div>
+      </div>
+    </form>
+  </div>
+</div>
 
 <% include partials/footer.ejs %> 

@@ -1,60 +1,82 @@
 <% include partials/header.ejs %>
 
 <div class="container">
-	<header class="jumbotron text-center">
-		<h1 class="simhei display-4">欢迎来到Lili的主页</h1>
-		<p class="kaiti">十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧</p>
-		<p> 
-			<i class="fa fa-weixin fa-lg" aria-hidden="true"></i> &nbsp; <%= info.wechat %>
-			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			<i class="fa fa-phone fa-lg" aria-hidden="true"></i> &nbsp; <%= info.phone %>
-		</p>
-	</header>
- 
- 	<% if (info.show_notice) { %>
-	 	<div class="alert alert-info" role="alert">
-			<span class="simsun"> <%= info.notice %> </span>
-		</div>
-	<% } %>
-	
-	<% profiles.forEach(function(profile, i){ %>
-		<div class="card">
-			<h4 class="card-header simhei"> <%= profile.name %> </h4>
-			<div class="card-body">
-				<h4 class="card-title simsun"> <%= profile.description %> </h4>
-				<div class="row text-center">
-					<% profile.images.forEach(function(image, j){ %>
-						<div class="col-lg-6 col-md-12">
-							<p id="<%= "para" + String(i) + "_" + String(j) %>">
-								<a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
-									<img src="<%= image %>" class="img-thumbnail">
-								</a>
-							</p>
-						</div>
-					<% }); %>
-				</div>
-			</div>
-		</div>
-		<br>
-	<% }); %>
-	
-	<% if(currentUser){ %>
-		<div class="bottom-buttons" style="margin-bottom:1.5em">
-			<a href="/admin" class="btn btn-success btn-xlg"> 管理页面 </a>
-			<span class="hspace"></span>
-			<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
-		</div>
-	<% } %>
+  <header class="jumbotron text-center">
+    <h1 class="simhei display-4">欢迎来到Lili的主页</h1>
+    <p class="kaiti"><%= poem %></p>
+    <p> 
+      <i class="fa fa-weixin fa-lg" aria-hidden="true"></i> &nbsp; <%= info.wechat %>
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+      <i class="fa fa-phone fa-lg" aria-hidden="true"></i> &nbsp; <%= info.phone %>
+    </p>
+  </header>
+  
+  <% if (info.show_notice) { %>
+  <div class="alert alert-info" role="alert">
+    <span class="simsun"> <%= info.notice %> </span>
+  </div>
+  <% } %>
+
+  <% profiles.forEach(function(profile, i){ %>
+  <div class="card">
+    <h4 class="card-header simhei"> <%= profile.name %> </h4>
+    <div class="card-body">
+      <h4 class="card-text simsun"> <%= profile.description %> </h4>
+    </div>
+    <ul class="list-group list-group-flush">
+      <% if (profile.images.length > 0) { %>
+      <li class="list-group-item">
+	<div class="card-body">
+	  <div class="row text-center">
+	    <% profile.images.forEach(function(image, j){ %>
+	    <div class="col-lg-6 col-md-12">
+	      <p id="<%= "para" + String(i) + "_" + String(j) %>">
+		<a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
+		  <img src="<%= image %>" class="img-thumbnail">
+		</a>
+	      </p>
+	    </div>
+	    <% }); %>
+	  </div>
+	</div>
+      </li>
+      <% } %>
+      <% if (profile.videos.length > 0) { %>
+      <li class="list-group-item">
+	<div class="card-body">
+	  <div class="row text-center">
+	    <% profile.videos.forEach(function(video, j){ %>
+	    <div class="col-lg-12">
+	      <div class="ratio-container">
+		<iframe class="video-frame" src="<%= video %>?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+	      </div>
+	    </div>
+	    <% }); %>
+	  </div>
+	</div>
+	</li>
+      <% } %>
+    </ul>
+  </div>
+  <br>
+  <% }); %>
+
+  <% if(currentUser){ %>
+  <div class="bottom-buttons" style="margin-bottom:1.5em">
+    <a href="/admin" class="btn btn-success btn-xlg"> 管理页面 </a>
+    <span class="hspace"></span>
+    <a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
+  </div>
+  <% } %>
 </div>
 
-
 <% profiles.forEach(function(profile, i){ %>
-	<% profile.images.forEach(function(image, j){ %>
-		<div class="lightbox-target" id="<%= "pic" + String(i) + "_" + String(j) %>">
-			<img src="<%= image %>">
-			<a class="lightbox-close" href="#<%= "para" + String(i) + "_" + String(j) %>"></a>
-		</div>
-	<% }); %>
+<% profile.images.forEach(function(image, j){ %>
+<div class="lightbox-target" id="<%= "pic" + String(i) + "_" + String(j) %>">
+  <img src="<%= image %>">
+  <a class="lightbox-close" href="#<%= "para" + String(i) + "_" + String(j) %>"></a>
+</div>
+<% }); %>
 <% }); %>
 
 <% include partials/footer.ejs %> 

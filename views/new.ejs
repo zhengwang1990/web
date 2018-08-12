@@ -1,55 +1,73 @@
 <% include partials/header.ejs %>
- 
+
 <div class="container">
-	<h1 class="top-h1"> 新建资料 </h1>
-	<div class="form-group">
-		<form action="/new" method="POST">
- 			<div class="card">
-  				<h4 class="card-header simhei"> 基本信息 </h4>
-  				<div class="card-body">
-    				<label for="name">姓名</label>
- 				    <input type="text" class="form-control" id="name" name="profile[name]" placeholder="姓名">
- 				    <br>
- 				    <label for="description">简介</label>
- 				    <textarea  class="form-control" rows="3" placeholder="一段介绍文字" id="description" name="profile[description]"></textarea>
-		 		</div>
-		 	</div>
-		 	<br>
-		 	<div class="card">
-  				<h4 class="card-header simhei">  照片 </h4>
-  				<div class="card-body">
-		 			<!--display photos-->
-		 			<div class="row text-center" id="photo_row">
-					</div>
-					<br>
-					
-					<div class="progress">
-						<div class="progress-bar" role="progressbar"></div>
-		 			</div>
-		 			<br>
-		 			<div class="text-center">
-						<button class="btn btn-primary btn-lg upload-btn" type="button">上传照片</button>
-					</div>
-				</div>
-			</div>
-			<input id="images" name="profile[images]" type="hidden">
-			<div class="bottom-buttons">
-				<div style="display:inline">
-					<input type="submit" class="btn btn-success btn-xlg" value="提交资料">
-				</div>
-				<span class="hspace"></span>
-				<a href="/admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
-				<span class="hspace"></span>
-				<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
-			<div>
-		 </form>
+  <h1 class="top-h1"> 新建资料 </h1>
+  <div class="form-group">
+    <form action="/new" method="POST">
+      <div class="card">
+  	<h4 class="card-header simhei"> 基本信息 </h4>
+  	<div class="card-body">
+    	  <label for="name">姓名</label>
+ 	  <input type="text" class="form-control" id="name" name="profile[name]" placeholder="姓名">
+ 	  <br>
+ 	  <label for="description">简介</label>
+ 	  <textarea  class="form-control" rows="3" placeholder="一段介绍文字" id="description" name="profile[description]"></textarea>
 	</div>
-		
- </div>
- 
- <input id="upload-input" type="file" name="uploads[]"></br>
- <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
- <script src="/javascripts/upload.js"></script>
- 
-<% include partials/footer.ejs %>
+      </div>
+      <br>
+      <div class="card">
+  	<h4 class="card-header simhei">  照片 </h4>
+  	<div class="card-body">
+	  <!--display photos-->
+	  <div class="row text-center" id="image_row">
+	  </div>
+	  <br>	  
+	  <div class="progress">
+	    <div class="progress-bar" id="image-progress-bar" role="progressbar"></div>
+	  </div>
+	  <br>
+	  <div class="text-center">
+	    <button class="btn btn-primary btn-lg upload-image-btn" type="button">上传照片</button>
+	  </div>
+	</div>
+      </div>
+      <br>
+      <div class="card">
+  	<h4 class="card-header simhei">视频</h4>
+  	<div class="card-body">
+	  <!--display videos-->
+	  <div class="row text-center" id="video_row">
+	  </div>
+	  <br>
+	  <div class="progress">
+	    <div class="progress-bar" id="video-progress-bar" role="progressbar"></div>
+	  </div>
+	  <br>
+	  <div class="text-center">
+	    <button class="btn btn-primary btn-lg upload-video-btn" type="button">上传视频</button>
+	  </div>
+	</div>
+      </div>
+
+      <input id="images" name="profile[images]" type="hidden">
+      <input id="videos" name="profile[videos]" type="hidden">
+      <div class="bottom-buttons">
+	<div style="display:inline">
+	  <input type="submit" class="btn btn-success btn-xlg" value="提交资料">
+	</div>
+	<span class="hspace"></span>
+	<a href="/admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
+	<span class="hspace"></span>
+	<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
+	<div>
+    </form>
+    </div>
+    </div>
+    
+    <input id="upload-image-input" type="file" name="uploads[]" accept="image/*">
+    <input id="upload-video-input" type="file" name="uploads[]" accept="video/*">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/javascripts/upload.js"></script>
+    
+    <% include partials/footer.ejs %>

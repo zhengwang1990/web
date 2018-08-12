@@ -1,28 +1,37 @@
 {
   "name": "lili-home",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
-  "author": "",
+  "author": "zhengwang",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "cloudinary": "^1.9.1",
     "connect-flash": "^0.1.1",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "formidable": "^1.1.1",
     "fs": "0.0.1-security",
+    "googleapis": "^32.0.0",
     "method-override": "^2.3.10",
     "mongoose": "^4.13.7",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.4.0",
     "path": "^0.12.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhengwang1990/web.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/zhengwang1990/web/issues"
+  },
+  "homepage": "https://github.com/zhengwang1990/web#readme",
+  "description": "lili's homepage"
 }
