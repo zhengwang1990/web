@@ -10,6 +10,7 @@ var express        = require('express'),
     LocalStrategy  = require('passport-local'),
     session        = require('express-session'),
     flash          = require('connect-flash'),
+    moment         = require('moment-timezone'),
     {google}       = require('googleapis');
 
 // seed & init
@@ -101,8 +102,7 @@ app.get('/', function(req, res) {
 });
 
 async function updateStat() {
-    var current = new Date();
-    var today = current.getFullYear()+'/'+(current.getMonth()+1)+'/'+current.getDate()+' UTC';
+    var today = moment.tz('America/Los_Angeles').format('YYYY/MM/DD UTC');
     Stat.findOne({}, function(err, stat) {
 	if (err) {
 	    console.log(err);

@@ -16,6 +16,8 @@ function initDB() {
 	}
     });
 
+    Stat.remove({}, function(err) {});
+    
     Stat.find({}, function(err, stats) {
 	if (err) throw err;
 	if (stats.length != 1) {
