@@ -1,3 +1,11 @@
+.align-right {
+    text-align: right;
+}
+
+.thumbs {
+    width: 80px;
+}
+
 .ratio-container {
     position: relative;
     width: 90%;

@@ -156,6 +156,7 @@ app.get('/info_update', isLoggedIn, function(req, res) {
 app.put('/info_update', isLoggedIn, function(req, res) {
     Info.findOne({}, function(err, info) {
 	req.body.info.show_notice = Boolean(req.body.info.show_notice);
+	req.body.info.allow_thumbs = Boolean(req.body.info.allow_thumbs);
 	info.update(req.body.info, function(err, updated_info) {
 	    if (err) {
 		console.log(err);
@@ -320,6 +321,28 @@ app.put('/:id', isLoggedIn, function(req, res) {
     	    res.redirect('/admin#' + String(req.params.id));
     	}
     });
+});
+
+// update profile likes or dislikes
+app.put('/:id/thumbs/:action', function(req, res) {
+    Profile.findById(req.params.id, function(err, profile) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    if (req.params.action == 'like') {
+		profile.likes++;
+	    }
+	    if (req.params.action == 'dislike') {
+		profile.dislikes++;
+	    }
+	    Profile.findByIdAndUpdate(req.params.id, profile, function(err, updated_profile) {
+    		if (err) {
+    		    console.log(err);
+		}
+	    });
+	}
+    });
+    res.send(null);
 });
 
 // destroy profile DELETE route

@@ -16,12 +16,12 @@
       </div>
       <div style="margin: 10px 0 10px 0;"></div>
       <div class="card">
-	<h4 class="card-header simhei"> 公告 </h4>
+	<h4 class="card-header simhei">公告</h4>
   	<div class="card-body">
   	  <label for="notice">公告</label>
 	  <textarea class="form-control" rows="3" id="notice" name="info[notice]"><%= info.notice %></textarea>
 	  <span class="radio">
-	    <label><input type="radio" name="info[show_notice]" value="y" <% if (info.show_notice) { %> checked <% } %> > 显示公告</label>
+	    <label><input type="radio" name="info[show_notice]" value="y" <% if (info.show_notice) { %> checked <% } %> >显示公告</label>
 	  </span>
 	  &nbsp; &nbsp
 	  <span class="radio">
@@ -29,6 +29,20 @@
 	  </span>
 	</div>
       </div>
+      <div style="margin: 10px 0 10px 0;"></div>
+      <div class="card">
+	<h4 class="card-header simhei">点赞</h4>
+  	<div class="card-body">
+	  <span class="radio">
+	    <label><input type="radio" name="info[allow_thumbs]" value="y" <% if (info.allow_thumbs) { %> checked <% } %> >允许点赞</label>
+	  </span>
+	  &nbsp; &nbsp
+	  <span class="radio">
+	    <label><input type="radio" name="info[allow_thumbs]" value="" <% if (!info.allow_thumbs) { %> checked <% } %> >禁用点赞</label>		
+	  </span>
+	</div>
+      </div>
+
       <div class="bottom-buttons">
 	<div style="display:inline">
 	  <input type="submit" class="btn btn-success btn-xlg" value="修改信息">

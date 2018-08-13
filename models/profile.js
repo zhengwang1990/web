@@ -5,7 +5,15 @@ var profileSchema = new mongoose.Schema({
     description: String,
     images: [String],
     videos: [String],
-    comments: [String]
+    comments: [String],
+    likes: {
+	type: Number,
+	default: 0
+    },
+    dislikes: {
+	type: Number,
+	default: 0
+    }
 });
 
 module.exports = mongoose.model("Profile", profileSchema);

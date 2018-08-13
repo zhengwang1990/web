@@ -4,10 +4,10 @@
   <header class="jumbotron text-center">
     <h1 class="simhei display-4">欢迎来到Lili的主页</h1>
     <p class="kaiti"><%= poem %></p>
-    <p> 
-      <i class="fa fa-weixin fa-lg" aria-hidden="true"></i> &nbsp; <%= info.wechat %>
+    <p>
+      <i class="fab fa-weixin fa-lg"></i> &nbsp; <%= info.wechat %>
       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-      <i class="fa fa-phone fa-lg" aria-hidden="true"></i> &nbsp; <%= info.phone %>
+      <i class="fas fa-phone fa-lg"></i> &nbsp; <%= info.phone %>
     </p>
   </header>
   
@@ -23,6 +23,20 @@
     <div class="card-body">
       <h4 class="card-text simsun"> <%= profile.description %> </h4>
     </div>
+    <% if (info.allow_thumbs) { %>
+    <div class="card-body align-right">
+      <button type="button" id="<%= profile._id %>-like" class="btn btn-outline-dark thumbs">
+	<i id="<%= profile._id %>-like-font" class="far fa-thumbs-up fa-lg"></i> &nbsp;
+	<span id="<%= profile._id %>-like-value"><%= profile.likes %></span>
+      </button>
+      &nbsp; &nbsp; &nbsp;
+      <button type="button" id="<%= profile._id %>-dislike" class="btn btn-outline-dark thumbs">
+	<i id="<%=profile._id %>-dislike-font" class="far fa-thumbs-down fa-lg"></i> &nbsp;
+	<span id="<%= profile._id %>-dislike-value"><%= profile.dislikes %></span>
+      </button>
+      &nbsp; &nbsp;
+    </div>
+    <% } %>
     <ul class="list-group list-group-flush">
       <% if (profile.images.length > 0) { %>
       <li class="list-group-item">
@@ -54,7 +68,7 @@
 	    <% }); %>
 	  </div>
 	</div>
-	</li>
+      </li>
       <% } %>
     </ul>
   </div>
@@ -79,4 +93,6 @@
 <% }); %>
 <% }); %>
 
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="/javascripts/thumbs.js"></script>
 <% include partials/footer.ejs %> 

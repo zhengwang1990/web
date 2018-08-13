@@ -1,109 +1,124 @@
 <% include partials/header.ejs %>
 
 <div class="container">
-    <header class="jumbotron text-center">
-	<h1 class="simhei">管理页面</h1>
-    </header>
+  <header class="jumbotron text-center">
+    <h1 class="simhei">管理页面</h1>
+  </header>
 
-    <div class="form-group">
-	<div class="card">
-	    <h4 class="card-header simhei">访问次数</h4>
-	    <div class="card-body">
-		<div class="graph-info">
-		    <button id="btn-alltime" type="button" class="btn-sm btn-outline-primary">全部</button>
-		    <button id="btn-30day" type="button" class="btn-sm btn-outline-primary active">30天</button>
-		</div>
-
-		<div class="graph-container">
-		    <div id="graph-30day"></div>
-		    <div id="graph-alltime"></div>
-		</div>
-	    </div>
+  <div class="form-group">
+    <div class="card">
+      <h4 class="card-header simhei">访问次数</h4>
+      <div class="card-body">
+	<div class="graph-info">
+	  <button id="btn-alltime" type="button" class="btn-sm btn-outline-primary">全部</button>
+	  <button id="btn-30day" type="button" class="btn-sm btn-outline-primary active">30天</button>
 	</div>
-    </div>
 
-    <div class="form-group">
-	<div class="card">
-	    <h4 class="card-header simhei"> 基本信息 </h4>
-	    <div class="card-body">
-  		<p> 微信号: <%= info.wechat %> </p>
-  		<p> 电话号码: <%= info.phone %> </p>
-  		<p> 公告： <div style="margin: 10px 0 10px 0;"></div> <%= info.notice %> </p>
-		<p> 显示公告： <% if (info.show_notice) { %> 是 <% } else { %> 否 <% } %></p>
-		<hr>
-		<div class="text-center">
-		    <a href="info_update" class="btn btn-success btn-lg"> 修改基本信息 </a>
-		</div>
-	    </div>
+	<div class="graph-container">
+	  <div id="graph-30day"></div>
+	  <div id="graph-alltime"></div>
 	</div>
+      </div>
     </div>
+  </div>
 
-    <% profiles.forEach(function(profile, i){ %>
-	<div class="card" id="<%= profile._id %>">
-	    <h4 class="card-header simhei"> <%= profile.name %> </h4>
-	    <div class="card-body">
-		<h4 class="card-title simsun"> <%= profile.description %> </h4>
-	    </div>
-	    <ul class="list-group list-group-flush">
-		<% if (profile.images.length > 0) { %>
-		    <li class="list-group-item">
-			<div class="card-body">
-			    <div class="row text-center">
-				<% profile.images.forEach(function(image, j){ %>
-				    <div class="col-lg-6 col-md-12">
-					<p> <img src="<%= image %>" class="img-thumbnail"> </p>
-				    </div>
-				<% }); %>
-			    </div>
-			</div>
-		    </li>
-		<% } %>
-		<% if (profile.videos.length > 0) { %>
-		    <li class="list-group-item">
-			<div class="card-body">
-			    <div class="row text-center">
-				<% profile.videos.forEach(function(video, j){ %>
-				    <div class="col-lg-12">
-					<div class="ratio-container">
-					    <iframe class="video-frame" src="<%= video %>?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-					</div>
-				    </div>
-				<% }); %>
-			    </div>
-			</div>
-		    </li>
-		<% } %>
-	    </ul>
-	    <div style="margin: 10px 0 10px 0;"></div>
-	    <div class="text-center">
-		<a href="/edit/<%= profile._id %>" class="btn btn-success btn-lg"> 修改资料 </a>
-		<span class="hspace"></span>
-		<form action="/<%= profile._id %>?_method=DELETE" method="POST" style="display:inline">
-		    <input type="submit" class="btn btn-danger btn-lg" value="删除资料">
-		</form>
-	    </div>
-	    <div style="margin: 10px 0 10px 0;"></div>
+  <div class="form-group">
+    <div class="card">
+      <h4 class="card-header simhei"> 基本信息 </h4>
+      <div class="card-body">
+  	<p> 微信号: <%= info.wechat %> </p>
+  	<p> 电话号码: <%= info.phone %> </p>
+  	<p> 公告： <div style="margin: 10px 0 10px 0;"></div> <%= info.notice %> </p>
+	<p> 显示公告： <% if (info.show_notice) { %> 是 <% } else { %> 否 <% } %></p>
+	<p> 允许点赞： <% if (info.allow_thumbs) { %> 是 <% } else { %> 否 <% } %></p>
+	<hr>
+	<div class="text-center">
+	  <a href="info_update" class="btn btn-success btn-lg"> 修改基本信息 </a>
 	</div>
-	<div style="margin: 10px 0 10px 0;"></div>
-    <% }); %>
-    
-    <div class="bottom-buttons" style="margin-bottom:2em">
-	<a href="new" class="btn btn-success btn-xlg"> 新建资料 </a>
-	<span class="hspace"></span>
-	<a href="/" class="btn btn-info btn-xlg"> 返回首页 </a>
-	<span class="hspace"></span>
-	<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>	
+      </div>
     </div>
+  </div>
 
-    <script>
-     var data_alltime = [{
-	 data: [<% stat.homepage.forEach(function(value, key){ %>
-		[<%= (new Date(key)).getTime() %>, <%= value %>],	     
-	 <% }); %>],
-	 color: '#77b7c5'
-     }];
-    </script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="/javascripts/jquery.flot.min.js"></script>
-    <script src="/javascripts/graph.js"></script>
-    <% include partials/footer.ejs %> 
+  <% profiles.forEach(function(profile, i){ %>
+  <div class="card" id="<%= profile._id %>">
+    <h4 class="card-header simhei"> <%= profile.name %> </h4>
+    <div class="card-body">
+      <h4 class="card-title simsun"> <%= profile.description %> </h4>
+    </div>
+    <% if (info.allow_thumbs) { %>
+    <div class="card-body align-right">
+      <button type="button" id="<%= profile._id %>-like" class="btn btn-outline-dark thumbs">
+	<i id="<%= profile._id %>-like-font" class="far fa-thumbs-up fa-lg"></i> &nbsp;
+	<span id="<%= profile._id %>-like-value"><%= profile.likes %></span>
+      </button>
+      &nbsp; &nbsp; &nbsp;
+      <button type="button" id="<%= profile._id %>-dislike" class="btn btn-outline-dark thumbs">
+	<i id="<%=profile._id %>-dislike-font" class="far fa-thumbs-down fa-lg"></i> &nbsp;
+	<span id="<%= profile._id %>-dislike-value"><%= profile.dislikes %></span>
+      </button>
+      &nbsp; &nbsp;
+    </div>
+    <% } %>
+    <ul class="list-group list-group-flush">
+      <% if (profile.images.length > 0) { %>
+      <li class="list-group-item">
+	<div class="card-body">
+	  <div class="row text-center">
+	    <% profile.images.forEach(function(image, j){ %>
+	    <div class="col-lg-6 col-md-12">
+	      <p> <img src="<%= image %>" class="img-thumbnail"> </p>
+	    </div>
+	    <% }); %>
+	  </div>
+	</div>
+      </li>
+      <% } %>
+      <% if (profile.videos.length > 0) { %>
+      <li class="list-group-item">
+	<div class="card-body">
+	  <div class="row text-center">
+	    <% profile.videos.forEach(function(video, j){ %>
+	    <div class="col-lg-12">
+	      <div class="ratio-container">
+		<iframe class="video-frame" src="<%= video %>?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+	      </div>
+	    </div>
+	    <% }); %>
+	  </div>
+	</div>
+      </li>
+      <% } %>
+    </ul>
+    <div style="margin: 10px 0 10px 0;"></div>
+    <div class="text-center">
+      <a href="/edit/<%= profile._id %>" class="btn btn-success btn-lg"> 修改资料 </a>
+      <span class="hspace"></span>
+      <form action="/<%= profile._id %>?_method=DELETE" method="POST" style="display:inline">
+	<input type="submit" class="btn btn-danger btn-lg" value="删除资料">
+      </form>
+    </div>
+    <div style="margin: 10px 0 10px 0;"></div>
+  </div>
+  <div style="margin: 10px 0 10px 0;"></div>
+  <% }); %>
+  
+  <div class="bottom-buttons" style="margin-bottom:2em">
+    <a href="new" class="btn btn-success btn-xlg"> 新建资料 </a>
+    <span class="hspace"></span>
+    <a href="/" class="btn btn-info btn-xlg"> 返回首页 </a>
+    <span class="hspace"></span>
+    <a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>	
+  </div>
+
+  <script>
+    var data_alltime = [{
+    data: [<% stat.homepage.forEach(function(value, key){ %>
+    [<%= (new Date(key)).getTime() %>, <%= value %>],	     
+    <% }); %>],
+    color: '#77b7c5'
+    }];
+  </script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="/javascripts/jquery.flot.min.js"></script>
+  <script src="/javascripts/graph.js"></script>
+  <% include partials/footer.ejs %> 
