@@ -314,12 +314,23 @@ app.put('/:id', isLoggedIn, function(req, res) {
     } else {
 	req.body.profile.videos = [];
     }
-    Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
-    	if (err) {
-    	    console.log(err);
-    	} else {
-    	    res.redirect('/admin#' + String(req.params.id));
-    	}
+    Profile.findById(req.params.id, function(err, profile) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    var name = profile.name;
+	    if (req.body.profile.name != name) {
+		req.body.profile.likes = 0;
+		req.body.profile.dislikes = 0;
+	    }
+	    Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
+    		if (err) {
+    		    console.log(err);
+    		} else {
+    		    res.redirect('/admin#' + String(req.params.id));
+    		}
+	    });
+	}
     });
 });
 
