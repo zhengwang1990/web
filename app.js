@@ -256,7 +256,7 @@ async function createFile(auth, filename, filepath, res) {
 	    body: fs.createReadStream(filepath)
 		}
   });
-  res.send('http://drive.google.com/uc?id='+google_res.data.id)
+  res.send('https://drive.google.com/uc?id='+google_res.data.id)
   fs.unlink(filepath, (err) => {
 		if (err) {
 	    console.log(err);
@@ -283,7 +283,7 @@ async function createVideo(auth, filename, filepath, res) {
 	    body: fs.createReadStream(filepath)
 		}
   });
-  res.send('http://www.youtube.com/embed/'+google_res.data.id)
+  res.send('https://www.youtube.com/embed/'+google_res.data.id)
   fs.unlink(filepath, (err) => {
 		if (err) {
 	    console.log(err);
