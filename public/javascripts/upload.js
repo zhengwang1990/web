@@ -78,7 +78,6 @@ $("#upload-image-input").on("change", function(){
 		return xhr;
 	    }
 	});
-
     }
 });
 
@@ -88,6 +87,7 @@ function reloadimage(data){
     $("#image_row").append('<div class="col-lg-6 col-md-12">\n' +
                            '<p> <img src="' + data + '" class="img-thumbnail"> </p>\n'+
 			   '<p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p> </div>');
+    $("#upload-image-input").val(null);
 }
 
 // =================== [ Videos ]==============================================
@@ -156,4 +156,5 @@ function reloadvideo(data){
 			   '<div class="ratio-container">\n' +
 			   '<iframe class="video-frame" src="' + data + '?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>\n' +
 			   '</div> <p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p> </div>');
+    $("#upload-video-input").val(null);
 }

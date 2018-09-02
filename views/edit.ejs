@@ -42,8 +42,8 @@
   	<h4 class="card-header simhei">视频</h4>
   	<div class="card-body">
 	  <!--display videos-->
+	  <% profile.videos.forEach(function(video, j){ %>
 	  <div class="row text-center" id="video_row">
-	    <% profile.videos.forEach(function(video, j){ %>
 	    <div class="col-lg-12">
 	      <div class="ratio-container">
 		<iframe class="video-frame" src="<%= video %>?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -51,8 +51,8 @@
 	      
 	      <p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p>
 	    </div>
-	    <% }); %>
 	  </div>
+	  <% }); %>
 	  <div style="margin: 10px 0 10px 0;"></div>
 	  <div class="progress">
 	    <div class="progress-bar" id="video-progress-bar" role="progressbar"></div>
@@ -80,7 +80,7 @@
     
     <input id="upload-image-input" type="file" name="uploads[]" accept="image/*">
     <input id="upload-video-input" type="file" name="uploads[]" accept="video/*">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="/javascripts/upload.js"></script>
     

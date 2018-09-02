@@ -76,15 +76,16 @@
       <% if (profile.videos.length > 0) { %>
       <li class="list-group-item">
 	<div class="card-body">
+	  <% profile.videos.forEach(function(video, j){ %>
 	  <div class="row text-center">
-	    <% profile.videos.forEach(function(video, j){ %>
 	    <div class="col-lg-12">
 	      <div class="ratio-container">
 		<iframe class="video-frame" src="<%= video %>?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 	      </div>
 	    </div>
-	    <% }); %>
 	  </div>
+	  <% if (j < profile.videos.length-1) { %> <div style="margin: 20px 0 20px 0;"></div> <% } %>
+	  <% }); %>
 	</div>
       </li>
       <% } %>
