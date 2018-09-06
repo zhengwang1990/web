@@ -29,7 +29,6 @@ $(document).ready(function () {
       hoverable: true
     },
     yaxis: {
-			tickLength: 5,
       tickDecimals: 0
     },
     xaxis: {
@@ -58,7 +57,6 @@ $(document).ready(function () {
       hoverable: true
     },
     yaxis: {
-			tickLength: 5,
       tickDecimals: 0
     },
     xaxis: {

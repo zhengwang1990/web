@@ -38,7 +38,7 @@ http://vladimirkudinov.com
 /*  Graph Container */
 .graph-container {
   position: relative;
-  width: 600px;
+  width: 615px;
   height: 320px;
   padding: 10px;
   margin: 0 auto;
@@ -57,7 +57,7 @@ http://vladimirkudinov.com
 }
 
 .graph-info {
-  width: 610px;
+  width: 625px;
   margin: 0 auto;
 }
 
