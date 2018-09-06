@@ -29,12 +29,13 @@ $(document).ready(function () {
       hoverable: true
     },
     yaxis: {
+			tickLength: 5,
       tickDecimals: 0
     },
     xaxis: {
       mode: "time",
       minTickSize: [1, "day"],
-      timeformat: "%m/%d",
+      timeformat: "%m/%d"
     },
   });
 
@@ -57,12 +58,13 @@ $(document).ready(function () {
       hoverable: true
     },
     yaxis: {
+			tickLength: 5,
       tickDecimals: 0
     },
     xaxis: {
       mode: "time",
       minTickSize: [1, "day"],
-      timeformat: "%y/%m/%d",
+      timeformat: "%y/%m/%d"
     },
   });
 
