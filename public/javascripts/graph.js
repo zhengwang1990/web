@@ -33,6 +33,7 @@ $(document).ready(function () {
     },
     xaxis: {
       mode: "time",
+      tickLength: 10,	
       minTickSize: [1, "day"],
       timeformat: "%m/%d"
     },
@@ -61,6 +62,7 @@ $(document).ready(function () {
     },
     xaxis: {
       mode: "time",
+      tickLength: 8,
       minTickSize: [1, "day"],
       timeformat: "%y/%m/%d"
     },
