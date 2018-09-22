@@ -9,7 +9,8 @@ $(document).ready(function () {
     }
   });
   var radius_alltime = Math.max(Math.min(5, 5*30/data_alltime[0].data.length), 1);
-
+  var min_tick_size = Math.max(Math.floor(data_alltime[0].data.length/8), 1);
+  
   // 30day Graph #############################################
   $.plot($('#graph-30day'), data_30day, {
     series: {
@@ -33,7 +34,6 @@ $(document).ready(function () {
     },
     xaxis: {
       mode: "time",
-      tickLength: 10,	
       minTickSize: [1, "day"],
       timeformat: "%m/%d"
     },
@@ -62,8 +62,7 @@ $(document).ready(function () {
     },
     xaxis: {
       mode: "time",
-      tickLength: 8,
-      minTickSize: [1, "day"],
+      minTickSize: [min_tick_size, "day"],
       timeformat: "%y/%m/%d"
     },
   });
