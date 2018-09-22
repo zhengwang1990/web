@@ -5,7 +5,8 @@ var infoSchema = new mongoose.Schema({
     phone: String,
     notice: String,
     show_notice: Boolean,
-    allow_thumbs: Boolean,
+    allow_like: Boolean,
+    allow_dislike: Boolean,
     allow_comments: Boolean,
 });
 

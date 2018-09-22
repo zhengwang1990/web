@@ -156,7 +156,8 @@ app.get('/info_update', isLoggedIn, function(req, res) {
 app.put('/info_update', isLoggedIn, function(req, res) {
   Info.findOne({}, function(err, info) {
     req.body.info.show_notice = Boolean(req.body.info.show_notice);
-    req.body.info.allow_thumbs = Boolean(req.body.info.allow_thumbs);
+    req.body.info.allow_like = Boolean(req.body.info.allow_like);
+    req.body.info.allow_dislike = Boolean(req.body.info.allow_dislike);
     info.update(req.body.info, function(err, updated_info) {
       if (err) {
         console.log(err);

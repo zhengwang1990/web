@@ -14,7 +14,9 @@
  	  <input type="text" class="form-control" id="phone" name="info[phone]" value="<%= info.phone %>">
 	</div>
       </div>
-      <div style="margin: 10px 0 10px 0;"></div>
+
+      <div style="margin: 15px 0 15px 0;"></div>
+
       <div class="card">
 	<h4 class="card-header simhei">公告</h4>
   	<div class="card-body">
@@ -29,16 +31,33 @@
 	  </span>
 	</div>
       </div>
-      <div style="margin: 10px 0 10px 0;"></div>
+ 
+      <div style="margin: 15px 0 15px 0;"></div>
+ 
       <div class="card">
-	<h4 class="card-header simhei">点赞</h4>
+	<h4 class="card-header simhei">允许点赞</h4>
   	<div class="card-body">
 	  <span class="radio">
-	    <label><input type="radio" name="info[allow_thumbs]" value="y" <% if (info.allow_thumbs) { %> checked <% } %> >允许点赞</label>
+	    <label><input type="radio" name="info[allow_like]" value="y" <% if (info.allow_like) { %> checked <% } %> >是</label>
 	  </span>
 	  &nbsp; &nbsp
 	  <span class="radio">
-	    <label><input type="radio" name="info[allow_thumbs]" value="" <% if (!info.allow_thumbs) { %> checked <% } %> >禁用点赞</label>		
+	    <label><input type="radio" name="info[allow_like]" value="" <% if (!info.allow_like) { %> checked <% } %> >否</label>		
+	  </span>
+	</div>
+      </div>
+ 
+      <div style="margin: 15px 0 15px 0;"></div>
+ 
+      <div class="card">
+	<h4 class="card-header simhei">允许差评</h4>
+  	<div class="card-body">
+	  <span class="radio">
+	    <label><input type="radio" name="info[allow_dislike]" value="y" <% if (info.allow_dislike) { %> checked <% } %> >是</label>
+	  </span>
+	  &nbsp; &nbsp
+	  <span class="radio">
+	    <label><input type="radio" name="info[allow_dislike]" value="" <% if (!info.allow_dislike) { %> checked <% } %> >否</label>		
 	  </span>
 	</div>
       </div>

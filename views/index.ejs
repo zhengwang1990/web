@@ -24,17 +24,23 @@
     <div class="card-body">
       <h4 class="card-text simsun"> <%= profile.description %> </h4>
     </div>
-    <% if (info.allow_thumbs) { %>
+    <% if (info.allow_like || info.allow_dislike) { %>
     <div class="card-body align-right">
+      <% if (info.allow_like) { %>
       <button type="button" id="<%= profile._id %>-like" class="btn btn-outline-dark thumbs">
 	<i id="<%= profile._id %>-like-font" class="far fa-thumbs-up fa-lg"></i> &nbsp;
 	<span id="<%= profile._id %>-like-value"><%= profile.likes %></span>
       </button>
+      <% } %>
+      <% if (info.allow_like && info.allow_dislike) { %>
       &nbsp; &nbsp; &nbsp;
+      <% } %>
+      <% if (info.allow_dislike) { %>
       <button type="button" id="<%= profile._id %>-dislike" class="btn btn-outline-dark thumbs">
 	<i id="<%=profile._id %>-dislike-font" class="far fa-thumbs-down fa-lg"></i> &nbsp;
 	<span id="<%= profile._id %>-dislike-value"><%= profile.dislikes %></span>
       </button>
+      <% } %>
       &nbsp; &nbsp;
     </div>
     <% } %>
