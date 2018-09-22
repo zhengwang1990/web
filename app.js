@@ -83,7 +83,7 @@ app.get('/', function(req, res) {
                  '驰道杨花满御沟，红妆缦绾上青楼 --- 王昌龄',
                  '香帏风动花入楼，高调鸣筝缓夜愁 --- 王昌龄',
                  '罗襦宝带为君解，燕歌赵舞为君开 --- 卢照邻'];
-    const title = process.env.TITLE;
+  const title = process.env.TITLE;
   Profile.find({}, function(err, profiles) {
     if (err) {
       console.log(err);
