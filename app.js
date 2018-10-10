@@ -109,9 +109,9 @@ function renderHomepage(req, res, info) {
     if (err) {
       console.log(err);
     } else {
-        var poem = poems[Math.floor(Math.random()*poems.length)];
-  res.render('index.ejs',
-                   {profiles:profiles, info:info, poem: poem, title:title});
+      var poem = poems[Math.floor(Math.random()*poems.length)];
+			res.render('index.ejs',
+                 {profiles:profiles, info:info, poem: poem, title:title});
     }
   });
   // update stat
@@ -132,7 +132,7 @@ async function updateStat() {
       }
       stat.save();
     }
-  });    
+  });
 }
 
 // admin page
@@ -239,17 +239,17 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
 app.post('/upload_video', isLoggedIn, function(req, res) {
   // create an incoming form object
   var form = new formidable.IncomingForm();
-  
+
   // specify that we want to allow the user to upload multiple files in a single request
   form.multiples = false;
-  
+
   // store all uploads in the /uploads directory
   form.uploadDir = './uploads'
-  
+
   if (!fs.existsSync(form.uploadDir)) {
     fs.mkdirSync(form.uploadDir);
   }
-  
+
   // every time a file has been uploaded successfully,
   form.on('file', function(field, file) {
     var filepath = path.join(form.uploadDir, file.name);
