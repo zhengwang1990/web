@@ -110,7 +110,7 @@ function renderHomepage(req, res, info) {
       console.log(err);
     } else {
       var poem = poems[Math.floor(Math.random()*poems.length)];
-			res.render('index.ejs',
+      res.render('index.ejs',
                  {profiles:profiles, info:info, poem: poem, title:title});
     }
   });
