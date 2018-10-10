@@ -22,6 +22,7 @@
   	<div class="card-body">
   	  <label for="notice">公告</label>
 	  <textarea class="form-control" rows="3" id="notice" name="info[notice]"><%= info.notice %></textarea>
+	  <div style="margin: 8px 0 8px 0;"></div>
 	  <span class="radio">
 	    <label><input type="radio" name="info[show_notice]" value="y" <% if (info.show_notice) { %> checked <% } %> >显示公告</label>
 	  </span>
@@ -58,6 +59,24 @@
 	  &nbsp; &nbsp
 	  <span class="radio">
 	    <label><input type="radio" name="info[allow_dislike]" value="" <% if (!info.allow_dislike) { %> checked <% } %> >否</label>		
+	  </span>
+	</div>
+      </div>
+
+      <div style="margin: 15px 0 15px 0;"></div>
+      
+      <div class="card">
+	<h4 class="card-header simhei">验证码</h4>
+  	<div class="card-body">
+  	  <label for="notice">验证码</label>
+	  <input type="text" class="form-control" id="access_code" name="info[access_code]" value="<%= info.access_code %>">
+	  <div style="margin: 8px 0 8px 0;"></div>
+	  <span class="radio">
+	    <label><input type="radio" name="info[enable_access_code]" value="y" <% if (info.enable_access_code) { %> checked <% } %> >需要验证码</label>
+	  </span>
+	  &nbsp; &nbsp
+	  <span class="radio">
+	    <label><input type="radio" name="info[enable_access_code]" value="" <% if (!info.enable_access_code) { %> checked <% } %> >不需要验证码</label>		
 	  </span>
 	</div>
       </div>

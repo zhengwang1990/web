@@ -32,6 +32,8 @@
         <p> 显示公告： <% if (info.show_notice) { %> 是 <% } else { %> 否 <% } %></p>
         <p> 允许点赞： <% if (info.allow_like) { %> 是 <% } else { %> 否 <% } %></p>
         <p> 允许差评： <% if (info.allow_dislike) { %> 是 <% } else { %> 否 <% } %></p>
+	<p> 验证码： <%= info.access_code %></p>
+	<p> 需要验证码： <% if (info.enable_access_code) { %> 是 <% } else { %> 否 <% } %></p>
         <hr>
         <div class="text-center">
           <a href="info_update" class="btn btn-success btn-lg"> 修改基本信息 </a>

@@ -68,40 +68,55 @@ function authorize(filename, filepath, res, callback) {
 
 
 function isLoggedIn(req, res, next) {
-  if(req.isAuthenticated()) {
+  if (req.isAuthenticated()) {
     return next();
   }
   req.flash('error', '你需要登录才能进行操作');
   res.redirect('/login');
 }
 
+const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
+               '二十四桥明月夜，玉人何处教吹箫 --- 杜牧',
+               '驰道杨花满御沟，红妆缦绾上青楼 --- 王昌龄',
+               '香帏风动花入楼，高调鸣筝缓夜愁 --- 王昌龄',
+               '罗襦宝带为君解，燕歌赵舞为君开 --- 卢照邻'];
+const title = process.env.TITLE;
 
 // homepage
-app.get('/', function(req, res) {
-  const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
-                 '二十四桥明月夜，玉人何处教吹箫 --- 杜牧',
-                 '驰道杨花满御沟，红妆缦绾上青楼 --- 王昌龄',
-                 '香帏风动花入楼，高调鸣筝缓夜愁 --- 王昌龄',
-                 '罗襦宝带为君解，燕歌赵舞为君开 --- 卢照邻'];
-  const title = process.env.TITLE;
+app.get('/', function(req, res){
+  Info.findOne({}, function(err, info) {
+    if (err) {
+      console.log(err);
+    } else {
+      var access_code = req.query['access_code'];
+      if (!info.enable_access_code ||
+          access_code == info.access_code ||
+          req.isAuthenticated()) {
+        renderHomepage(req, res, info);
+      } else if (access_code == null) {
+        var poem = poems[Math.floor(Math.random()*poems.length)];
+        res.render('access.ejs', {info:info, poem:poem, title:title});
+      } else {
+        req.flash('error', '验证码不正确');
+        res.redirect('/');
+      }
+    }
+  });
+});
+
+function renderHomepage(req, res, info) {
   Profile.find({}, function(err, profiles) {
     if (err) {
       console.log(err);
     } else {
-      Info.findOne({}, function(err, info) {
-        if (err) {
-          console.log(err);
-        } else {
-          var poem = poems[Math.floor(Math.random()*poems.length)]
-            res.render('index.ejs',
-		       {profiles:profiles, info:info, poem: poem, title:title});
-        }
-      });
+        var poem = poems[Math.floor(Math.random()*poems.length)];
+  res.render('index.ejs',
+                   {profiles:profiles, info:info, poem: poem, title:title});
     }
   });
   // update stat
   updateStat();
-});
+}
 
 async function updateStat() {
   var today = moment.tz('America/Los_Angeles').format('YYYY/MM/DD UTC');
@@ -160,6 +175,7 @@ app.put('/info_update', isLoggedIn, function(req, res) {
     req.body.info.show_notice = Boolean(req.body.info.show_notice);
     req.body.info.allow_like = Boolean(req.body.info.allow_like);
     req.body.info.allow_dislike = Boolean(req.body.info.allow_dislike);
+    req.body.info.enable_access_code = Boolean(req.body.info.enable_access_code);
     info.update(req.body.info, function(err, updated_info) {
       if (err) {
         console.log(err);
