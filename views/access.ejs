@@ -5,9 +5,9 @@
     <h1 class="simhei display-4"> <%= title %> </h1>
     <p class="kaiti"><%= poem %></p>
     <p>
-      <i class="fab fa-weixin fa-lg"></i> &nbsp; <%= info.wechat %>
-      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-      <i class="fas fa-phone fa-lg"></i> &nbsp; <%= info.phone %>
+      <% if (info.wechat) { %> <i class="fab fa-weixin fa-lg"></i> &nbsp; <%= info.wechat %> <% } %>
+      <% if (info.wechat && info.phone) { %> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <% } %>
+      <% if (info.phone) { %> <i class="fas fa-phone fa-lg"></i> &nbsp; <%= info.phone %> <% } %>
     </p>
   </header>
 
@@ -29,6 +29,6 @@
       </div>
     </form>
    </div>
-   
+
 </div>
-<% include partials/footer.ejs %> 
+<% include partials/footer.ejs %>
