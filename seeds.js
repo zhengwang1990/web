@@ -50,20 +50,6 @@ function seedDB(){
       addData();
     }
   });
-  Info.remove({}, function(err){
-    if (err) {
-      console.log(err);
-    } else {
-      addInfo();
-    }
-  });
-  User.remove({}, function(err){
-     if (err) {
-       console.log(err);
-     } else {
-       addUser();
-     }
-  });
 }
 
 function addData(){
@@ -79,15 +65,6 @@ function addData(){
 function addInfo(){
   Info.create(info_data, function(err, info){
     if (err){
-      console.log(err);
-    }
-  });
-}
-
-function addUser(){
-  var newUser = new User({username: "lili"});
-  User.register(newUser, "12345", function(err, user){
-    if(err){
       console.log(err);
     }
   });

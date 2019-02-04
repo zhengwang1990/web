@@ -1,5 +1,5 @@
 {
-  "name": "lili-home",
+  "name": "gallery",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
@@ -34,5 +34,5 @@
     "url": "https://github.com/zhengwang1990/web/issues"
   },
   "homepage": "https://github.com/zhengwang1990/web#readme",
-  "description": "lili's homepage"
+  "description": "gallery"
 }

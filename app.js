@@ -81,6 +81,7 @@ const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
                '香帏风动花入楼，高调鸣筝缓夜愁 --- 王昌龄',
                '罗襦宝带为君解，燕歌赵舞为君开 --- 卢照邻'];
 const title = process.env.TITLE;
+const header = process.env.HEADER;
 
 // homepage
 app.get('/', function(req, res){
@@ -94,7 +95,8 @@ app.get('/', function(req, res){
         renderHomepage(req, res, info);
       } else if (access_code == null) {
         var poem = poems[Math.floor(Math.random()*poems.length)];
-        res.render('access.ejs', {info:info, poem:poem, title:title});
+        res.render('access.ejs', 
+                   {info: info, poem: poem, header: header, title: title});
       } else {
         req.flash('error', '验证码不正确');
         res.redirect('/');
@@ -110,7 +112,8 @@ function renderHomepage(req, res, info) {
     } else {
       var poem = poems[Math.floor(Math.random()*poems.length)];
       res.render('index.ejs',
-                 {profiles:profiles, info:info, poem: poem, title:title});
+                 {profiles: profiles, info: info, poem: poem, 
+                  header: header, title: title});
     }
   });
   // update stat
@@ -148,7 +151,9 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
             if (err) {
               console.log(err);
             } else {
-              res.render('admin.ejs', {profiles:profiles, info:info, stat: stat});
+              res.render('admin.ejs', 
+                         {profiles: profiles, info: info, stat: stat, 
+                          title: title});
             }
           });
         }
@@ -163,7 +168,7 @@ app.get('/info_update', isLoggedIn, function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      res.render('info_update.ejs', {info:info});
+      res.render('info_update.ejs', {info: info, title: title});
     }
   });
 });
@@ -186,7 +191,7 @@ app.put('/info_update', isLoggedIn, function(req, res) {
 
 // create NEW profile GET form
 app.get('/new', isLoggedIn, function(req, res) {
-  res.render('new.ejs');
+  res.render('new.ejs', {title: title});
 });
 
 // create NEW profile post route
@@ -291,7 +296,7 @@ async function createVideo(auth, filename, filepath, res) {
     notifySubscribers: false,
     requestBody: {
       snippet: {
-        title: 'lilihome-video',
+        title: process.env.USERNAME + '-video',
       },
       status: {
         privacyStatus: 'public'
@@ -315,7 +320,7 @@ app.get('/edit/:id', isLoggedIn, function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      res.render('edit.ejs', {profile: profile});
+      res.render('edit.ejs', {profile: profile, title: title});
     }
   });
 });
@@ -387,7 +392,7 @@ app.delete('/:id', isLoggedIn, function(req, res) {
 
 // show login form
 app.get('/login', function(req, res) {
-  res.render('login.ejs');
+  res.render('login.ejs', {title: title});
 });
 
 // handling login logic
