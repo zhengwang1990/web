@@ -268,7 +268,7 @@ async function createFile(auth, filename, filepath, res) {
   const google_res = await drive.files.create({
     requestBody: {
       name: filename,
-      parents: ['1b839ObCYW_FeOqa9iSok4WUoXN4Kz6x_']
+      parents: [process.env.DRIVE_DIR]
     },
     media: {
       body: fs.createReadStream(filepath)
