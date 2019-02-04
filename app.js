@@ -90,8 +90,7 @@ app.get('/', function(req, res){
     } else {
       var access_code = req.query['access_code'];
       if (!info.enable_access_code ||
-          access_code == info.access_code ||
-          req.isAuthenticated()) {
+          access_code == info.access_code) {
         renderHomepage(req, res, info);
       } else if (access_code == null) {
         var poem = poems[Math.floor(Math.random()*poems.length)];
