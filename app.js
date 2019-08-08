@@ -151,8 +151,17 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
             if (err) {
               console.log(err);
             } else {
+              var current = moment.tz('America/Los_Angeles').add(1, 'day');
+              var visit = new Map();
+              for(var i = 0; i < 365; i++) {
+                var key = current.add(-1, 'day').format('YYYY/MM/DD UTC');
+                var value = stat.homepage.get(key);
+                if (value) {
+                  visit.set(key, value);
+                }
+              }
               res.render('admin.ejs', 
-                         {profiles: profiles, info: info, stat: stat, 
+                         {profiles: profiles, info: info, visit: visit,
                           title: title});
             }
           });
@@ -392,7 +401,11 @@ app.delete('/:id', isLoggedIn, function(req, res) {
 
 // show login form
 app.get('/login', function(req, res) {
-  res.render('login.ejs', {title: title});
+  if (req.isAuthenticated()) {
+    res.redirect('/admin');
+  } else {
+    res.render('login.ejs', {title: title});
+  }
 });
 
 // handling login logic
