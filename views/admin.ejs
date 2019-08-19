@@ -54,7 +54,7 @@
     <div class="card-body align-left">
       <span class="plain-btn">
         <i class="fa fa-calendar-alt"></i> &thinsp;
-        最后一天 <%= profile.lastday.substring(5) %> &thinsp;
+        <% if (profile.lastday && profile.lastday.length > 5) { %> 最后一天 <%= profile.lastday.substring(5) %> &thinsp; <% } %>
         还剩<span class="dayleft-num" lastday="<%= profile.lastday %>"></span>天
       </span>
       <span class="dayleft-progress" lastday="<%= profile.lastday %>"></span>
