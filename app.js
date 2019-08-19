@@ -113,7 +113,7 @@ function renderHomepage(req, res, info) {
       var poem = poems[Math.floor(Math.random()*poems.length)];
       res.render('index.ejs',
                  {profiles: profiles, info: info, poem: poem, 
-                  header: header, title: title});
+                  header: header, title: title, dayleft: 10});
     }
   });
   // update stat
@@ -162,7 +162,7 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
               }
               res.render('admin.ejs', 
                          {profiles: profiles, info: info, visit: visit,
-                          title: title});
+                          title: title, dayleft: 10});
             }
           });
         }
@@ -189,6 +189,7 @@ app.put('/info_update', isLoggedIn, function(req, res) {
     req.body.info.allow_like = Boolean(req.body.info.allow_like);
     req.body.info.allow_dislike = Boolean(req.body.info.allow_dislike);
     req.body.info.enable_access_code = Boolean(req.body.info.enable_access_code);
+    req.body.info.enable_lastday = Boolean(req.body.info.enable_lastday);
     info.update(req.body.info, function(err, updated_info) {
       if (err) {
         console.log(err);
@@ -200,7 +201,13 @@ app.put('/info_update', isLoggedIn, function(req, res) {
 
 // create NEW profile GET form
 app.get('/new', isLoggedIn, function(req, res) {
-  res.render('new.ejs', {title: title});
+  Info.findOne({}, function(err, info) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render('new.ejs', {title: title, info: info});
+    }
+  });
 });
 
 // create NEW profile post route
@@ -329,7 +336,13 @@ app.get('/edit/:id', isLoggedIn, function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      res.render('edit.ejs', {profile: profile, title: title});
+      Info.findOne({}, function(err, info) {
+        if (err) {
+          console.log(err);
+        } else {
+          res.render('edit.ejs', {profile: profile, title: title, info: info});
+        }
+      });
     }
   });
 });

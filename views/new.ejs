@@ -5,61 +5,73 @@
   <div class="form-group">
     <form action="/new" method="POST">
       <div class="card">
-  	<h4 class="card-header simhei"> 基本信息 </h4>
-  	<div class="card-body">
-    	  <label for="name">姓名</label>
- 	  <input type="text" class="form-control" id="name" name="profile[name]" placeholder="姓名">
- 	  <div style="margin: 10px 0 10px 0;"></div>
- 	  <label for="description">简介</label>
- 	  <textarea  class="form-control" rows="3" placeholder="一段介绍文字" id="description" name="profile[description]"></textarea>
-	</div>
+        <h4 class="card-header simhei"> 基本信息 </h4>
+        <div class="card-body">
+            <label for="name">姓名</label>
+         <input type="text" class="form-control" id="name" name="profile[name]" placeholder="姓名">
+         <div style="margin: 10px 0 10px 0;"></div>
+         <label for="description">简介</label>
+         <textarea  class="form-control" rows="3" placeholder="一段介绍文字" id="description" name="profile[description]"></textarea>
+        <% if (info.enable_lastday) { %>
+        <div style="margin: 10px 0 10px 0;"></div>
+        <label for="name">最后一天</label>
+        <div id="sandbox-container">
+          <div class="input-group date mb-3">
+            <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar-alt"></i></span>
+            </div>
+            <input type="text" class="form-control" id="lastday" name="profile[lastday]" readonly>
+          </div>
+        </div>
+	<% } %>
+      </div>
       </div>
       <div style="margin: 10px 0 10px 0;"></div>
       <div class="card">
-  	<h4 class="card-header simhei">  照片 </h4>
-  	<div class="card-body">
-	  <!--display photos-->
-	  <div class="row text-center" id="image_row">
-	  </div>
-	  <div style="margin: 10px 0 10px 0;"></div>	  
-	  <div class="progress">
-	    <div class="progress-bar" id="image-progress-bar" role="progressbar"></div>
-	  </div>
-	  <div style="margin: 10px 0 10px 0;"></div>
-	  <div class="text-center">
-	    <button class="btn btn-primary btn-lg upload-image-btn" type="button">上传照片</button>
-	  </div>
-	</div>
+        <h4 class="card-header simhei">  照片 </h4>
+        <div class="card-body">
+        <!--display photos-->
+        <div class="row text-center" id="image_row">
+        </div>
+        <div style="margin: 10px 0 10px 0;"></div>        
+        <div class="progress">
+          <div class="progress-bar" id="image-progress-bar" role="progressbar"></div>
+        </div>
+        <div style="margin: 10px 0 10px 0;"></div>
+        <div class="text-center">
+          <button class="btn btn-primary btn-lg upload-image-btn" type="button">上传照片</button>
+        </div>
+      </div>
       </div>
       <div style="margin: 10px 0 10px 0;"></div>
       <div class="card">
-  	<h4 class="card-header simhei">视频</h4>
-  	<div class="card-body">
-	  <!--display videos-->
-	  <div class="row text-center" id="video_row">
-	  </div>
-	  <div style="margin: 10px 0 10px 0;"></div>
-	  <div class="progress">
-	    <div class="progress-bar" id="video-progress-bar" role="progressbar"></div>
-	  </div>
-	  <div style="margin: 10px 0 10px 0;"></div>
-	  <div class="text-center">
-	    <button class="btn btn-primary btn-lg upload-video-btn" type="button">上传视频</button>
-	  </div>
-	</div>
+        <h4 class="card-header simhei">视频</h4>
+        <div class="card-body">
+        <!--display videos-->
+        <div class="row text-center" id="video_row">
+        </div>
+        <div style="margin: 10px 0 10px 0;"></div>
+        <div class="progress">
+          <div class="progress-bar" id="video-progress-bar" role="progressbar"></div>
+        </div>
+        <div style="margin: 10px 0 10px 0;"></div>
+        <div class="text-center">
+          <button class="btn btn-primary btn-lg upload-video-btn" type="button">上传视频</button>
+        </div>
+      </div>
       </div>
 
       <input id="images" name="profile[images]" type="hidden">
       <input id="videos" name="profile[videos]" type="hidden">
       <div class="bottom-buttons">
-	<div style="display:inline">
-	  <input type="submit" class="btn btn-success btn-xlg" value="提交资料">
-	</div>
-	<span class="hspace"></span>
-	<a href="/admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
-	<span class="hspace"></span>
-	<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
-	<div>
+      <div style="display:inline">
+        <input type="submit" class="btn btn-success btn-xlg" value="提交资料">
+      </div>
+      <span class="hspace"></span>
+      <a href="/admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
+      <span class="hspace"></span>
+      <a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
+      <div>
     </form>
     </div>
     </div>
@@ -68,6 +80,8 @@
     <input id="upload-video-input" type="file" name="uploads[]" accept="video/*">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="/javascripts/upload.js"></script>
+    <script src="/javascripts/bootstrap-datepicker.js"></script>
+    <script src="/javascripts/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/javascripts/profile.js"></script>
     
     <% include partials/footer.ejs %>

@@ -158,3 +158,36 @@ function reloadvideo(data){
                            '</div> <p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p> </div>');
     $("#upload-video-input").val(null);
 }
+
+$("#sandbox-container .input-group.date").datepicker({
+    maxViewMode: 1,
+    language: "zh-CN",
+    autoclose: true,
+    todayHighlight: true
+});
+
+var nextdateUpdated = false;
+
+$("#name").on("input", function(){
+    if (!nextdateUpdated) {
+        var today = new Date();
+        var nextday = Math.round(today.getDate()/10 - 0.2) * 10 + 10;
+        if (nextday <= 20) {
+            var nextdate = new Date(today.getFullYear(), today.getMonth(), nextday);
+        } else if (nextday <= 30) {
+            var nextdate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        } else {
+            var nextdate = new Date(today.getFullYear(), today.getMonth() + 1, 10);
+        }
+        var dd = String(nextdate.getDate()).padStart(2, '0');
+        var mm = String(nextdate.getMonth() + 1).padStart(2, '0');
+        var yyyy =  nextdate.getFullYear();
+        nextdate = yyyy + '-' + mm + '-' + dd;
+        $("#lastday").val(nextdate);
+	nextdateUpdated = true;
+    }
+});
+
+$("#lastday").on("change", function(){
+    nextdateUpdated = true;
+});

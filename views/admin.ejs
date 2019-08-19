@@ -28,12 +28,13 @@
       <div class="card-body">
         <p> 微信号: <%= info.wechat %> </p>
         <p> 电话号码: <%= info.phone %> </p>
-        <p> 公告： <div style="margin: 10px 0 10px 0;"></div> <%= info.notice %> </p>
+        <p> 公告： <%= info.notice %> </p>
         <p> 显示公告： <% if (info.show_notice) { %> 是 <% } else { %> 否 <% } %></p>
         <p> 允许点赞： <% if (info.allow_like) { %> 是 <% } else { %> 否 <% } %></p>
         <p> 允许差评： <% if (info.allow_dislike) { %> 是 <% } else { %> 否 <% } %></p>
-	<p> 验证码： <%= info.access_code %></p>
-	<p> 需要验证码： <% if (info.enable_access_code) { %> 是 <% } else { %> 否 <% } %></p>
+        <p> 验证码： <%= info.access_code %></p>
+        <p> 需要验证码： <% if (info.enable_access_code) { %> 是 <% } else { %> 否 <% } %></p>
+        <p> 显示最后一天： <% if (info.enable_lastday) { %> 是 <% } else { %> 否 <% } %></p>
         <hr>
         <div class="text-center">
           <a href="info_update" class="btn btn-success btn-lg"> 修改基本信息 </a>
@@ -49,6 +50,16 @@
     <div class="card-body">
       <h4 class="card-title simsun"> <%= profile.description %> </h4>
     </div>
+    <% if (info.enable_lastday) { %>
+    <div class="card-body align-left">
+      <span class="plain-btn">
+        <i class="fa fa-calendar-alt"></i> &thinsp;
+        最后一天 <%= profile.lastday.substring(5) %> &thinsp;
+        还剩<span class="dayleft-num" lastday="<%= profile.lastday %>"></span>天
+      </span>
+      <span class="dayleft-progress" lastday="<%= profile.lastday %>"></span>
+    </div>
+    <% } %>
     <% if (info.allow_like || info.allow_dislike) { %>
     <div class="card-body align-right">
       <% if (info.allow_like) { %>
@@ -133,4 +144,5 @@
   <script src="/javascripts/jquery.flot.js"></script>
   <script src="/javascripts/jquery.flot.time.js"></script>
   <script src="/javascripts/graph.js"></script>
+  <script src="/javascripts/lastday.js"></script>
   <% include partials/footer.ejs %>

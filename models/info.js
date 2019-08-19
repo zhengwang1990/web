@@ -10,6 +10,7 @@ var infoSchema = new mongoose.Schema({
     allow_dislike: Boolean,
     allow_comments: Boolean,
     enable_access_code: Boolean,
+    enable_lastday: Boolean,
 });
 
 module.exports = mongoose.model("Info", infoSchema);

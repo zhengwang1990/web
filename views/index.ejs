@@ -24,6 +24,16 @@
     <div class="card-body">
       <h4 class="card-text simsun"> <%= profile.description %> </h4>
     </div>
+    <% if (info.enable_lastday) { %>
+    <div class="card-body align-left">
+      <span class="plain-btn">
+	<i class="fa fa-calendar-alt"></i> &thinsp;
+	最后一天 <%= profile.lastday.substring(5) %> &thinsp;
+	还剩<span class="dayleft-num" lastday="<%= profile.lastday %>"></span>天
+      </span>
+      <span class="dayleft-progress" lastday="<%= profile.lastday %>"></span>
+    </div>
+    <% } %>
     <% if (info.allow_like || info.allow_dislike) { %>
     <div class="card-body align-right">
       <% if (info.allow_like) { %>
@@ -103,4 +113,5 @@
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <script src="/javascripts/thumbs.js"></script>
+<script src="/javascripts/lastday.js"></script>
 <% include partials/footer.ejs %> 

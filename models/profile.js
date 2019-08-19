@@ -13,7 +13,8 @@ var profileSchema = new mongoose.Schema({
     dislikes: {
 	type: Number,
 	default: 0
-    }
+    },
+    lastday: String
 });
 
 module.exports = mongoose.model("Profile", profileSchema);

@@ -5,91 +5,106 @@
   <div class="form-group">
     <form action="/info_update?_method=PUT" method="POST">
       <div class="card">
-  	<h4 class="card-header simhei">  联系方式 </h4>
-  	<div class="card-body">
-	  <label for="wechat">微信号</label>
- 	  <input type="text" class="form-control" id="wechat" name="info[wechat]" value="<%= info.wechat %>">
- 	  <div style="margin: 10px 0 10px 0;"></div>
- 	  <label for="phone">电话号码</label>
- 	  <input type="text" class="form-control" id="phone" name="info[phone]" value="<%= info.phone %>">
-	</div>
+        <h4 class="card-header simhei">  联系方式 </h4>
+        <div class="card-body">
+          <label for="wechat">微信号</label>
+          <input type="text" class="form-control" id="wechat" name="info[wechat]" value="<%= info.wechat %>">
+          <div style="margin: 10px 0 10px 0;"></div>
+          <label for="phone">电话号码</label>
+          <input type="text" class="form-control" id="phone" name="info[phone]" value="<%= info.phone %>">
+        </div>
       </div>
 
       <div style="margin: 15px 0 15px 0;"></div>
 
       <div class="card">
-	<h4 class="card-header simhei">公告</h4>
-  	<div class="card-body">
-  	  <label for="notice">公告</label>
-	  <textarea class="form-control" rows="3" id="notice" name="info[notice]"><%= info.notice %></textarea>
-	  <div style="margin: 8px 0 8px 0;"></div>
-	  <span class="radio">
-	    <label><input type="radio" name="info[show_notice]" value="y" <% if (info.show_notice) { %> checked <% } %> >显示公告</label>
-	  </span>
-	  &nbsp; &nbsp
-	  <span class="radio">
-	    <label><input type="radio" name="info[show_notice]" value="" <% if (!info.show_notice) { %> checked <% } %> >不显示公告</label>		
-	  </span>
-	</div>
+        <h4 class="card-header simhei">公告</h4>
+        <div class="card-body">
+          <label for="notice">公告</label>
+          <textarea class="form-control" rows="3" id="notice" name="info[notice]"><%= info.notice %></textarea>
+          <div style="margin: 8px 0 8px 0;"></div>
+          <span class="radio">
+            <label><input type="radio" name="info[show_notice]" value="y" <% if (info.show_notice) { %> checked <% } %> >显示公告</label>
+          </span>
+          &nbsp; &nbsp
+          <span class="radio">
+            <label><input type="radio" name="info[show_notice]" value="" <% if (!info.show_notice) { %> checked <% } %> >不显示公告</label>            
+          </span>
+        </div>
       </div>
- 
+      
       <div style="margin: 15px 0 15px 0;"></div>
- 
+      
       <div class="card">
-	<h4 class="card-header simhei">允许点赞</h4>
-  	<div class="card-body">
-	  <span class="radio">
-	    <label><input type="radio" name="info[allow_like]" value="y" <% if (info.allow_like) { %> checked <% } %> >是</label>
-	  </span>
-	  &nbsp; &nbsp
-	  <span class="radio">
-	    <label><input type="radio" name="info[allow_like]" value="" <% if (!info.allow_like) { %> checked <% } %> >否</label>		
-	  </span>
-	</div>
+        <h4 class="card-header simhei">允许点赞</h4>
+          <div class="card-body">
+          <span class="radio">
+            <label><input type="radio" name="info[allow_like]" value="y" <% if (info.allow_like) { %> checked <% } %> >是</label>
+          </span>
+          &nbsp; &nbsp
+          <span class="radio">
+            <label><input type="radio" name="info[allow_like]" value="" <% if (!info.allow_like) { %> checked <% } %> >否</label>                
+          </span>
+        </div>
       </div>
- 
+      
       <div style="margin: 15px 0 15px 0;"></div>
- 
+      
       <div class="card">
-	<h4 class="card-header simhei">允许差评</h4>
-  	<div class="card-body">
-	  <span class="radio">
-	    <label><input type="radio" name="info[allow_dislike]" value="y" <% if (info.allow_dislike) { %> checked <% } %> >是</label>
-	  </span>
-	  &nbsp; &nbsp
-	  <span class="radio">
-	    <label><input type="radio" name="info[allow_dislike]" value="" <% if (!info.allow_dislike) { %> checked <% } %> >否</label>		
-	  </span>
-	</div>
+        <h4 class="card-header simhei">允许差评</h4>
+          <div class="card-body">
+          <span class="radio">
+            <label><input type="radio" name="info[allow_dislike]" value="y" <% if (info.allow_dislike) { %> checked <% } %> >是</label>
+          </span>
+          &nbsp; &nbsp
+          <span class="radio">
+            <label><input type="radio" name="info[allow_dislike]" value="" <% if (!info.allow_dislike) { %> checked <% } %> >否</label>                
+          </span>
+        </div>
       </div>
 
       <div style="margin: 15px 0 15px 0;"></div>
       
       <div class="card">
-	<h4 class="card-header simhei">验证码</h4>
-  	<div class="card-body">
-  	  <label for="notice">验证码</label>
-	  <input type="text" class="form-control" id="access_code" name="info[access_code]" value="<%= info.access_code %>">
-	  <div style="margin: 8px 0 8px 0;"></div>
-	  <span class="radio">
-	    <label><input type="radio" name="info[enable_access_code]" value="y" <% if (info.enable_access_code) { %> checked <% } %> >需要验证码</label>
-	  </span>
-	  &nbsp; &nbsp
-	  <span class="radio">
-	    <label><input type="radio" name="info[enable_access_code]" value="" <% if (!info.enable_access_code) { %> checked <% } %> >不需要验证码</label>		
-	  </span>
-	</div>
+        <h4 class="card-header simhei">验证码</h4>
+          <div class="card-body">
+            <label for="notice">验证码</label>
+          <input type="text" class="form-control" id="access_code" name="info[access_code]" value="<%= info.access_code %>">
+          <div style="margin: 8px 0 8px 0;"></div>
+          <span class="radio">
+            <label><input type="radio" name="info[enable_access_code]" value="y" <% if (info.enable_access_code) { %> checked <% } %> >需要验证码</label>
+          </span>
+          &nbsp; &nbsp
+          <span class="radio">
+            <label><input type="radio" name="info[enable_access_code]" value="" <% if (!info.enable_access_code) { %> checked <% } %> >不需要验证码</label>                
+          </span>
+        </div>
+      </div>
+
+      <div style="margin: 15px 0 15px 0;"></div>
+      
+      <div class="card">
+        <h4 class="card-header simhei">显示最后一天</h4>
+          <div class="card-body">
+          <span class="radio">
+            <label><input type="radio" name="info[enable_lastday]" value="y" <% if (info.enable_lastday) { %> checked <% } %> >是</label>
+          </span>
+          &nbsp; &nbsp
+          <span class="radio">
+            <label><input type="radio" name="info[enable_lastday]" value="" <% if (!info.enable_lastday) { %> checked <% } %> >否</label>                
+          </span>
+        </div>
       </div>
 
       <div class="bottom-buttons">
-	<div style="display:inline">
-	  <input type="submit" class="btn btn-success btn-xlg" value="修改信息">
-	</div>
-	<span class="hspace"></span>
-	<a href="admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
-	<span class="hspace"></span>
-	<a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
-	<div>
+        <div style="display:inline">
+          <input type="submit" class="btn btn-success btn-xlg" value="修改信息">
+        </div>
+        <span class="hspace"></span>
+        <a href="admin" class="btn btn-info btn-xlg"> 返回管理页面 </a>
+        <span class="hspace"></span>
+        <a href="/logout" class="btn btn-info btn-xlg"> 退出登录 </a>
+        <div>
     </form>
     </div>
     </div>

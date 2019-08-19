@@ -201,13 +201,49 @@ hr {
   }
 }
 
-.btn-xlg{
-  padding:.75rem 1.5rem;
-  font-size:1.5rem;
-  line-height:1.5;
-  border-radius:.4rem
+.btn-xlg {
+  padding: .75rem 1.5rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  border-radius: .4rem;
 }
 
-body{
-  font-size:1.25rem;
+body {
+  font-size: 1.25rem;
+}
+
+.progress-span {
+  display: inline-block;
+  height: 25px;
+  width: 15px;
+  background-color: #dbdbdb;
+  border: 1px solid black;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.btn.nohover:hover {
+  cursor: default !important;
+  color: #343a40; 
+  background-color: transparent;
+}
+
+.plain-btn {
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid #343a40;
+  color: #343a40;
+  background-color: transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+}
+
+
+#lastday[readonly] {
+  background-color: white;
 }
