@@ -167,9 +167,10 @@ $("#sandbox-container .input-group.date").datepicker({
 });
 
 var nextdateUpdated = false;
-
+var nameChangeCount = 0;
 $("#name").on("input", function(){
-    if (!nextdateUpdated) {
+    nameChangeCount++;
+    if (!nextdateUpdated && nameChangeCount >= 4) {
         var today = new Date();
         var nextday = Math.round(today.getDate()/10 - 0.2) * 10 + 10;
         if (nextday <= 20) {
