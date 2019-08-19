@@ -1,4 +1,7 @@
 function getDayLeft(lastday) {
+    if (lastday == "") {
+      return 0;
+    }
     var dateElems = lastday.split("-")
     lastday = new Date(parseInt(dateElems[0]), parseInt(dateElems[1])-1, parseInt(dateElems[2]));
     var today = new Date();
