@@ -247,3 +247,8 @@ body {
 #lastday[readonly] {
   background-color: white;
 }
+
+.my-card-body {
+  flex: 1 1 auto;
+  padding: 0rem 1.25rem 1.25rem 1.25rem;  
+}

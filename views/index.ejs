@@ -25,7 +25,7 @@
       <h4 class="card-text simsun"> <%= profile.description %> </h4>
     </div>
     <% if (info.enable_lastday) { %>
-    <div class="card-body align-left">
+    <div class="my-card-body align-left">
       <span class="plain-btn">
 	<i class="fa fa-calendar-alt"></i> &thinsp;
         <% if (profile.lastday && profile.lastday.length > 5) { %> 最后一天 <%= profile.lastday.substring(5) %>  &thinsp; <% } %>
@@ -35,7 +35,7 @@
     </div>
     <% } %>
     <% if (info.allow_like || info.allow_dislike) { %>
-    <div class="card-body align-right">
+    <div class="my-card-body align-right">
       <% if (info.allow_like) { %>
       <button type="button" id="<%= profile._id %>-like" class="btn btn-outline-dark thumbs">
 	<i id="<%= profile._id %>-like-font" class="far fa-thumbs-up fa-lg"></i> &nbsp;

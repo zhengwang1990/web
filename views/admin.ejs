@@ -51,7 +51,7 @@
       <h4 class="card-title simsun"> <%= profile.description %> </h4>
     </div>
     <% if (info.enable_lastday) { %>
-    <div class="card-body align-left">
+    <div class="my-card-body align-left">
       <span class="plain-btn">
         <i class="fa fa-calendar-alt"></i> &thinsp;
         <% if (profile.lastday && profile.lastday.length > 5) { %> 最后一天 <%= profile.lastday.substring(5) %> &thinsp; <% } %>
@@ -61,21 +61,21 @@
     </div>
     <% } %>
     <% if (info.allow_like || info.allow_dislike) { %>
-    <div class="card-body align-right">
+    <div class="my-card-body align-right">
       <% if (info.allow_like) { %>
-      <button type="button" id="<%= profile._id %>-like" class="btn btn-outline-dark thumbs">
+      <span id="<%= profile._id %>-like" class="plain-btn thumbs">
         <i id="<%= profile._id %>-like-font" class="far fa-thumbs-up fa-lg"></i> &nbsp;
         <span id="<%= profile._id %>-like-value"><%= profile.likes %></span>
-      </button>
+      </span>
       <% } %>
       <% if (info.allow_like && info.allow_dislike) { %>
       &nbsp; &nbsp; &nbsp;
       <% } %>
       <% if (info.allow_dislike) { %>
-      <button type="button" id="<%= profile._id %>-dislike" class="btn btn-outline-dark thumbs">
+      <span id="<%= profile._id %>-dislike" class="plain-btn thumbs">
         <i id="<%=profile._id %>-dislike-font" class="far fa-thumbs-down fa-lg"></i> &nbsp;
         <span id="<%= profile._id %>-dislike-value"><%= profile.dislikes %></span>
-      </button>
+      </span>
       <% } %>
       &nbsp; &nbsp;
     </div>
