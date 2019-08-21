@@ -163,7 +163,8 @@ $("#sandbox-container .input-group").datepicker({
     maxViewMode: 1,
     language: "zh-CN",
     autoclose: true,
-    todayHighlight: true
+    todayHighlight: true,
+    startDate: "yesterday"
 });
 
 var nextdateUpdated = false;
