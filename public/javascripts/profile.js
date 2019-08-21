@@ -159,7 +159,7 @@ function reloadvideo(data){
     $("#upload-video-input").val(null);
 }
 
-$("#sandbox-container .input-group.date").datepicker({
+$("#sandbox-container .input-group").datepicker({
     maxViewMode: 1,
     language: "zh-CN",
     autoclose: true,
@@ -185,6 +185,7 @@ $("#name").on("input", function(){
         var yyyy =  nextdate.getFullYear();
         nextdate = yyyy + '-' + mm + '-' + dd;
         $("#lastday").val(nextdate);
+        $("#sandbox-container .input-group").datepicker("update");
 	nextdateUpdated = true;
     }
 });
