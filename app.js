@@ -85,6 +85,7 @@ const header = process.env.HEADER;
 
 // homepage
 app.get('/', function(req, res){
+  console.log("GET / is requested");
   Info.findOne({}, function(err, info) {
     if (err) {
       console.log(err);
@@ -95,7 +96,7 @@ app.get('/', function(req, res){
         renderHomepage(req, res, info);
       } else if (access_code == null) {
         var poem = poems[Math.floor(Math.random()*poems.length)];
-        res.render('access.ejs', 
+        res.render('access.ejs',
                    {info: info, poem: poem, header: header, title: title});
       } else {
         req.flash('error', '验证码不正确');
@@ -112,7 +113,7 @@ function renderHomepage(req, res, info) {
     } else {
       var poem = poems[Math.floor(Math.random()*poems.length)];
       res.render('index.ejs',
-                 {profiles: profiles, info: info, poem: poem, 
+                 {profiles: profiles, info: info, poem: poem,
                   header: header, title: title, dayleft: 10});
     }
   });
