@@ -83,9 +83,13 @@ const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
 const title = process.env.TITLE;
 const header = process.env.HEADER;
 
+function getReqIp(req) {
+  return req.headers['x-forwarded-for'] || req.connection.remoteAddress
+}
+
 // homepage
-app.get('/', function(req, res){
-  console.log("GET / is requested");
+app.get('/', function(req, res) {
+  console.log("GET / is requested from " + getReqIp(req));
   Info.findOne({}, function(err, info) {
     if (err) {
       console.log(err);
