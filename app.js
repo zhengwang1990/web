@@ -85,7 +85,7 @@ const header = process.env.HEADER;
 
 // homepage
 app.get('/', function(req, res) {
-  var ip = (req.headers['x-forwarded-for'] || '').split(',').pop() || req.connection.remoteAddress;
+  var ip = (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
   console.log('[' + ip + '] GET / is requested');
   Info.findOne({}, function(err, info) {
     if (err) {
