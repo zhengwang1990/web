@@ -83,13 +83,9 @@ const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
 const title = process.env.TITLE;
 const header = process.env.HEADER;
 
-function getReqIp(req) {
-  return req.headers['x-forwarded-for'] || req.connection.remoteAddress
-}
-
 // homepage
 app.get('/', function(req, res) {
-  console.log("GET / is requested from " + getReqIp(req));
+  console.log('[' + req.ip + '] GET / is requested');
   Info.findOne({}, function(err, info) {
     if (err) {
       console.log(err);
@@ -97,12 +93,15 @@ app.get('/', function(req, res) {
       var access_code = req.query['access_code'];
       if (!info.enable_access_code ||
           access_code == info.access_code) {
+	console.log('[' + req.ip + '] Render home page');
         renderHomepage(req, res, info);
       } else if (access_code == null) {
+	console.log('[' + req.ip + '] Render access page');
         var poem = poems[Math.floor(Math.random()*poems.length)];
         res.render('access.ejs',
                    {info: info, poem: poem, header: header, title: title});
       } else {
+	console.log('[' + req.ip + '] Wrong access code: ' + access_code);
         req.flash('error', '验证码不正确');
         res.redirect('/');
       }
