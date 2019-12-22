@@ -85,7 +85,8 @@ const header = process.env.HEADER;
 
 // homepage
 app.get('/', function(req, res) {
-  console.log('[' + req.ip + '] GET / is requested');
+  var ip = (req.headers['x-forwarded-for'] || '').split(',').pop() || req.connection.remoteAddress;
+  console.log('[' + ip + '] GET / is requested');
   Info.findOne({}, function(err, info) {
     if (err) {
       console.log(err);
@@ -93,15 +94,15 @@ app.get('/', function(req, res) {
       var access_code = req.query['access_code'];
       if (!info.enable_access_code ||
           access_code == info.access_code) {
-	console.log('[' + req.ip + '] Render home page');
+	console.log('[' + ip + '] Render home page');
         renderHomepage(req, res, info);
       } else if (access_code == null) {
-	console.log('[' + req.ip + '] Render access page');
+	console.log('[' + ip + '] Render access page');
         var poem = poems[Math.floor(Math.random()*poems.length)];
         res.render('access.ejs',
                    {info: info, poem: poem, header: header, title: title});
       } else {
-	console.log('[' + req.ip + '] Wrong access code: ' + access_code);
+	console.log('[' + ip + '] Wrong access code: ' + access_code);
         req.flash('error', '验证码不正确');
         res.redirect('/');
       }
