@@ -34,5 +34,8 @@
     "url": "https://github.com/zhengwang1990/web/issues"
   },
   "homepage": "https://github.com/zhengwang1990/web#readme",
-  "description": "gallery"
+  "description": "gallery",
+  "engines": {
+    "node": "10.15.2"
+  }
 }
