@@ -105,7 +105,7 @@ function getCity(req) {
 function logRequest(req, message) {
   var ts = new Date(Date.now());
   var ip = getIp(req);
-  console.log('[' + ts + '] [' + ip + '] ' + message);
+  console.log('[' + ts.toUTCString() + '] [' + ip + '] ' + message);
 }
 
 // homepage
