@@ -12,7 +12,8 @@ var express        = require('express'),
     flash          = require('connect-flash'),
     moment         = require('moment-timezone'),
     {google}       = require('googleapis'),
-    rateLimit      = require("express-rate-limit");
+    rateLimit      = require("express-rate-limit"),
+    geoip          = require('geoip-lite');
 
 // seed & init
 var seedDB = require('./seeds');
@@ -33,6 +34,9 @@ var limiter = rateLimit({
   max: 15,
   message: '访问太频繁, 请稍后重试. Too many requests, please try again later.'
 });
+
+var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67',
+		 '#798584', '#cf8091', '#c474c0', '#ff8811'];
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
@@ -91,9 +95,24 @@ const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
 const title = process.env.TITLE;
 const header = process.env.HEADER;
 
+
+function getIp(req) {
+  return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
+}
+
+function getCity(req) {
+  var ip = getIp(req);
+  if (ip) {
+    var loc = geoip.lookup(ip);
+    if (loc) {
+      return loc.city;
+    }
+  }
+}
+
 function logRequest(req, message) {
   var ts = new Date(Date.now());
-  var ip = (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
+  var ip = getIp(req);
   console.log('[' + ts + '] [' + ip + '] ' + message);
 }
 
@@ -107,7 +126,6 @@ app.get('/', function(req, res) {
       var access_code = req.query['access_code'];
       if (!info.enable_access_code ||
           access_code == info.access_code) {
-	logRequest(req, 'Render home page');
         renderHomepage(req, res, info);
       } else if (access_code == null) {
 	logRequest(req, 'Render access page');
@@ -128,17 +146,18 @@ function renderHomepage(req, res, info) {
     if (err) {
       console.log(err);
     } else {
+      logRequest(req, 'Render home page');
       var poem = poems[Math.floor(Math.random()*poems.length)];
       res.render('index.ejs',
                  {profiles: profiles, info: info, poem: poem,
-                  header: header, title: title, dayleft: 10});
+                  header: header, title: title});
     }
   });
   // update stat
-  updateStat();
+  updateStat(req);
 }
 
-async function updateStat() {
+async function updateStat(req) {
   var today = moment.tz('America/Los_Angeles').format('YYYY/MM/DD UTC');
   Stat.findOne({}, function(err, stat) {
     if (err) {
@@ -149,6 +168,14 @@ async function updateStat() {
         stat.homepage.set(today, 1);
       } else {
         stat.homepage.set(today, value+1);
+      }
+      var city = getCity(req);
+      console.log(stat.cities);
+      if (city) {
+	stat.cities.push(city);
+	while (stat.cities.length > 1000) {
+	  stat.cities.shift();
+	}
       }
       stat.save();
     }
@@ -178,9 +205,27 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
                   visit.set(key, value);
                 }
               }
-              res.render('admin.ejs', 
+	      var cities = new Map();
+	      for(var i = 0; i < stat.cities.length; i++){
+		var city = stat.cities[i];
+		var value = cities.get(city)
+		if (!value) {
+		  cities.set(city, 1);
+		} else {
+		  cities.set(city, value+1);
+		}
+	      }
+	      console.log(cities);
+	      var cityData = new Array();
+	      var i = 0;
+	      cities.forEach(function(data, label){
+		cityData.push({'label': label, 'data': data, 'color': pieColors[i]});
+		i = (i + 1) % pieColors.length;
+	      });
+	      console.log(cityData);
+              res.render('admin.ejs',
                          {profiles: profiles, info: info, visit: visit,
-                          title: title, dayleft: 10});
+                          title: title, cityData: cityData});
             }
           });
         }

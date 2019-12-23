@@ -111,4 +111,22 @@ $(document).ready(function () {
       previousPoint = null;
     }
   });
+
+  $.plot('#piechart', city_data, {
+    series: {
+        pie: {
+            show: true,
+            combine: {
+                color: '#d66b84',
+                threshold: 0.1
+            }
+        }
+    },
+    legend: {
+        show: false
+    },
+    grid: {
+      hoverable: true,
+    }
+  });
 });
