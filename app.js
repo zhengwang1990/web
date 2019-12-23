@@ -12,7 +12,6 @@ var express        = require('express'),
     flash          = require('connect-flash'),
     moment         = require('moment-timezone'),
     {google}       = require('googleapis'),
-    rateLimit      = require("express-rate-limit"),
     geoip          = require('geoip-lite');
 
 // seed & init
@@ -29,12 +28,6 @@ mongoose.connect(process.env.MONGODB, {
   useNewUrlParser: true
 });
 
-var limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 15,
-  message: '访问太频繁, 请稍后重试. Too many requests, please try again later.'
-});
-
 var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67',
 		 '#798584', '#cf8091', '#c474c0', '#ff8811'];
 
@@ -42,7 +35,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use(flash());
-app.use(limiter);
 
 // passport configuration
 app.use(session({
