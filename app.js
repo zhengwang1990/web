@@ -11,7 +11,8 @@ var express        = require('express'),
     session        = require('express-session'),
     flash          = require('connect-flash'),
     moment         = require('moment-timezone'),
-    {google}       = require('googleapis');
+    {google}       = require('googleapis'),
+    rateLimit      = require("express-rate-limit");
 
 // seed & init
 var seedDB = require('./seeds');
@@ -27,10 +28,17 @@ mongoose.connect(process.env.MONGODB, {
   useNewUrlParser: true
 });
 
+var limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 15,
+  message: '访问太频繁, 请稍后重试. Too many requests, please try again later.'
+});
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use(flash());
+app.use(limiter);
 
 // passport configuration
 app.use(session({
@@ -83,10 +91,15 @@ const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
 const title = process.env.TITLE;
 const header = process.env.HEADER;
 
+function logRequest(req, message) {
+  var ts = new Date(Date.now());
+  var ip = (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
+  console.log('[' + ts + '] [' + ip + '] ' + message);
+}
+
 // homepage
 app.get('/', function(req, res) {
-  var ip = (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
-  console.log('[' + ip + '] GET / is requested');
+  logRequest(req, 'GET / is requested');
   Info.findOne({}, function(err, info) {
     if (err) {
       console.log(err);
@@ -94,15 +107,15 @@ app.get('/', function(req, res) {
       var access_code = req.query['access_code'];
       if (!info.enable_access_code ||
           access_code == info.access_code) {
-	console.log('[' + ip + '] Render home page');
+	logRequest(req, 'Render home page');
         renderHomepage(req, res, info);
       } else if (access_code == null) {
-	console.log('[' + ip + '] Render access page');
+	logRequest(req, 'Render access page');
         var poem = poems[Math.floor(Math.random()*poems.length)];
         res.render('access.ejs',
                    {info: info, poem: poem, header: header, title: title});
       } else {
-	console.log('[' + ip + '] Wrong access code: ' + access_code);
+	logRequest(req, 'Wrong access code: ' + access_code);
         req.flash('error', '验证码不正确');
         res.redirect('/');
       }
