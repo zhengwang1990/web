@@ -118,7 +118,7 @@ $(document).ready(function () {
             show: true,
             combine: {
                 color: '#d66b84',
-                threshold: 0.1
+                threshold: 0.05
             }
         }
     },
