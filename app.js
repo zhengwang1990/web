@@ -162,7 +162,6 @@ async function updateStat(req) {
         stat.homepage.set(today, value+1);
       }
       var city = getCity(req);
-      console.log(stat.cities);
       if (city) {
 	stat.cities.push(city);
 	while (stat.cities.length > 1000) {
@@ -207,14 +206,12 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
 		  cities.set(city, value+1);
 		}
 	      }
-	      console.log(cities);
 	      var cityData = new Array();
 	      var i = 0;
 	      cities.forEach(function(data, label){
 		cityData.push({'label': label, 'data': data, 'color': pieColors[i]});
 		i = (i + 1) % pieColors.length;
 	      });
-	      console.log(cityData);
               res.render('admin.ejs',
                          {profiles: profiles, info: info, visit: visit,
                           title: title, cityData: cityData});
