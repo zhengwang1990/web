@@ -197,7 +197,7 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
                 }
               }
 	      var cities = new Map();
-	      for(var i = 0; i < stat.cities.length; i++){
+	      for(var i = 0; i < stat.cities.length; i++) {
 		var city = stat.cities[i];
 		var value = cities.get(city)
 		if (!value) {
@@ -207,11 +207,13 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
 		}
 	      }
 	      var cityData = new Array();
-	      var i = 0;
-	      cities.forEach(function(data, label){
-		cityData.push({'label': label, 'data': data, 'color': pieColors[i]});
-		i = (i + 1) % pieColors.length;
+	      cities.forEach(function(data, label) {
+		cityData.push({'label': label, 'data': data});
 	      });
+	      cityData.sort(function(a, b) {return b.data - a.data});
+	      for (var i = 0; i < cityData.length; i++) {
+		cityData[i].color = pieColors[i % pieColors.length];
+	      }
               res.render('admin.ejs',
                          {profiles: profiles, info: info, visit: visit,
                           title: title, cityData: cityData});

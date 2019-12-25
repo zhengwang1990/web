@@ -114,19 +114,38 @@ $(document).ready(function () {
 
   $.plot('#piechart', city_data, {
     series: {
-        pie: {
-            show: true,
-            combine: {
-                color: '#d66b84',
-                threshold: 0.02
-            }
+      pie: {
+        show: true,
+        innerRadius: 0.5,
+        label: {
+          threshold: 0.03
+        },
+        combine: {
+          color: '#d66b84',
+          threshold: 0.01
         }
+      }
     },
     legend: {
-        show: false
+      show: false
     },
     grid: {
       hoverable: true,
     }
   });
+
+  var previousIndex = null;
+  $('#piechart').bind('plothover', function (event, pos, item) {
+    if (item) {
+      if (previousIndex != item.seriesIndex) {
+        previousIndex = item.seriesIndex;
+        $('#tooltip').remove();
+        showTooltip(pos.pageX, pos.pageY, item.datapoint[1][0][1]  + '次(' + item.datapoint[0].toFixed(0) +'%)来自' + item.series.label + '的访问');
+      }
+    } else {
+      $('#tooltip').remove();
+      previousIndex = null;
+    }
+  });
+
 });
