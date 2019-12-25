@@ -28,7 +28,7 @@ mongoose.connect(process.env.MONGODB, {
   useNewUrlParser: true
 });
 
-var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67',
+var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67', '#549abf',
 		 '#798584', '#cf8091', '#c474c0', '#ff8811'];
 
 app.use(bodyParser.urlencoded({extended: true}));
