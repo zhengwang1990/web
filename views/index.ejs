@@ -20,10 +20,9 @@
 
   <% profiles.forEach(function(profile, i){ %>
   <div class="card">
-    <div class="card-header simhei zero-padding">
-      <span class="header-span left-span"><%= i+1 %> #</span>
-      <span class="header-span"><%= profile.name %></span>
-    </div>
+    <h4 class="card-header simhei">
+      <b><%= i+1 %> # </b> &nbsp; | &nbsp; <%= profile.name %>
+    </h4>
     <div class="card-body">
       <h4 class="card-text simsun"> <%= profile.description %> </h4>
     </div>
