@@ -57,8 +57,11 @@
   <div style="margin: 25px 0 25px 0;"></div>
 
   <% profiles.forEach(function(profile, i){ %>
-  <div class="card" id="<%= profile._id %>">
-    <h4 class="card-header simhei"> <%= profile.name %> </h4>
+  <div class="card overflow-hidden">
+    <div class="arrow-right">
+      <span><%= i+1 %> #</span>
+    </div>
+    <h4 class="card-header simhei arrow-align"> <%= profile.name %> </h4>
     <div class="card-body">
       <h4 class="card-title simsun"> <%= profile.description %> </h4>
     </div>

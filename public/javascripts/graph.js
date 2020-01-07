@@ -140,7 +140,7 @@ $(document).ready(function () {
       if (previousIndex != item.seriesIndex) {
         previousIndex = item.seriesIndex;
         $('#tooltip').remove();
-        showTooltip(pos.pageX, pos.pageY, item.datapoint[1][0][1]  + '次(' + item.datapoint[0].toFixed(0) +'%)来自' + item.series.label + '的访问');
+        showTooltip(pos.pageX, pos.pageY, item.datapoint[0].toFixed(0) +'%来自' + item.series.label + '的访问');
       }
     } else {
       $('#tooltip').remove();
