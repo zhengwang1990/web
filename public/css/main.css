@@ -255,11 +255,13 @@ body {
 
 .zero-padding {
   padding: 0rem;
+  font-size: 1.5rem;
 }
 
 .header-span {
   padding: 0.75rem 1.25rem;
 }
+
 .left-span {
   width: 80px;
   background: rgba(0, 0, 0, 0.15);
