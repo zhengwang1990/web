@@ -250,6 +250,8 @@ body {
   vertical-align: middle;
   user-select: none;
   border: 1px solid #343a40;
+  color: #343a40;
+  background-color: transparent;
   padding: .375rem .75rem;
   font-size: 1rem;
   line-height: 1.5;
