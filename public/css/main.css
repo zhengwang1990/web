@@ -243,7 +243,6 @@ body {
   border-radius: .25rem;
 }
 
-
 #lastday[readonly] {
   background-color: white;
 }
@@ -269,13 +268,4 @@ body {
 .right-header {
   padding: 0.75rem 1.25rem;
   display: inline-block;
-}
-
-
-.my-card-header:first-child {
-  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
-}
-
-.my-card-header + .list-group .list-group-item:first-child {
-  border-top: 0;
 }
