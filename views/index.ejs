@@ -38,7 +38,7 @@
     </div>
     <% if (info.enable_lastday) { %>
     <div class="my-card-body align-left">
-      <span class="plain-btn-dark"> <b> <%= i+1 %> # </b></span>
+      <span class="plain-btn"> <b> <%= i+1 %> # </b></span>
       <span class="plain-btn">
 	<i class="fa fa-calendar-alt"></i> &thinsp;
         <% if (profile.lastday && profile.lastday.length > 5) { %> 最后一天 <%= profile.lastday.substring(5) %>  &thinsp; <% } %>
