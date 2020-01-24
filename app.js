@@ -12,7 +12,8 @@ var express        = require('express'),
     flash          = require('connect-flash'),
     moment         = require('moment-timezone'),
     {google}       = require('googleapis'),
-    geoip          = require('geoip-lite');
+    geoip          = require('geoip-lite'),
+		cloudinary     = require('cloudinary').v2;
 
 // seed & init
 var seedDB = require('./seeds');
@@ -59,6 +60,12 @@ app.use(function(req, res, next) {
   next();
 });
 
+cloudinary.config({
+  cloud_name: 'zhengwang',
+  api_key: '797236461388679',
+  api_secret: process.env.CLOUDINARY_SECRET
+});
+
 
 function authorize(filename, filepath, res, callback) {
   const credentials = JSON.parse(process.env.CREDENTIALS);
@@ -69,7 +76,6 @@ function authorize(filename, filepath, res, callback) {
   oAuth2Client.setCredentials(JSON.parse(token));
   callback(oAuth2Client, filename, filepath, res);
 }
-
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
@@ -330,13 +336,33 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
     fs.rename(file.path, filepath, (err) => {
       if (err) throw err;
     });
-    authorize(file.name, filepath, res, createVideo);
+		var filesize = fs.statSync(filepath).size;
+		var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
+		var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+		cloudinary.uploader.upload(
+		  filepath,
+		  {quality: quality,
+			 fetch_format: "auto",
+			 folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
+		  function(error, result) {
+				if (error) {
+					console.log(error);
+				}
+				res.send(result.secure_url);
+				fs.unlink(filepath, (err) => {
+					if (err) {
+						console.log(err);
+					}
+				});
+			}
+		);
   });
 
   // parse the incoming request containing the form data
   form.parse(req);
 });
 
+// [Deprecated] Create file in Google Drive
 async function createFile(auth, filename, filepath, res) {
   const filesize = fs.statSync(filepath).size;
   const drive = google.drive({version: 'v3', auth});
