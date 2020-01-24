@@ -26,7 +26,8 @@ var Profile = require('./models/profile'),
     Stat    = require('./models/stat');
 
 mongoose.connect(process.env.MONGODB, {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+	useUnifiedTopology: true
 });
 
 var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67', '#549abf',
@@ -308,27 +309,27 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
     var filepath = path.join(form.uploadDir, file.name);
     fs.rename(file.path, filepath, (err) => {
       if (err) throw err;
+			const filesize = fs.statSync(filepath).size;
+			var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
+			var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+			cloudinary.uploader.upload(
+			  filepath,
+			  {quality: quality,
+				 fetch_format: "auto",
+				 folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
+				function(error, result) {
+					if (error) {
+						console.log(error);
+					}
+					res.send(result.secure_url);
+					fs.unlink(filepath, (err) => {
+						if (err) {
+							console.log(err);
+						}
+					});
+				}
+			);
     });
-    var filesize = fs.statSync(filepath).size;
-    var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
-    var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
-    cloudinary.uploader.upload(
-      filepath,
-      {quality: quality,
-       fetch_format: "auto",
-       folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
-      function(error, result) {
-        if (error) {
-          console.log(error);
-        }
-        res.send(result.secure_url);
-        fs.unlink(filepath, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
-      }
-    );
   });
 
   // parse the incoming request containing the form data
@@ -354,8 +355,8 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
     var filepath = path.join(form.uploadDir, file.name);
     fs.rename(file.path, filepath, (err) => {
       if (err) throw err;
+			authorize(file.name, filepath, res, createVideo);
     });
-		authorize(file.name, filepath, res, createVideo);
   });
 
   // parse the incoming request containing the form data
