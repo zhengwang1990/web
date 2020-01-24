@@ -13,7 +13,7 @@ var express        = require('express'),
     moment         = require('moment-timezone'),
     {google}       = require('googleapis'),
     geoip          = require('geoip-lite'),
-		cloudinary     = require('cloudinary').v2;
+    cloudinary     = require('cloudinary').v2;
 
 // seed & init
 var seedDB = require('./seeds');
@@ -30,7 +30,7 @@ mongoose.connect(process.env.MONGODB, {
 });
 
 var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67', '#549abf',
-		 '#798584', '#cf8091', '#c474c0', '#ff8811'];
+     '#798584', '#cf8091', '#c474c0', '#ff8811'];
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
@@ -126,12 +126,12 @@ app.get('/', function(req, res) {
           access_code == info.access_code) {
         renderHomepage(req, res, info);
       } else if (access_code == null) {
-	logRequest(req, 'Render access page');
+  logRequest(req, 'Render access page');
         var poem = poems[Math.floor(Math.random()*poems.length)];
         res.render('access.ejs',
                    {info: info, poem: poem, header: header, title: title});
       } else {
-	logRequest(req, 'Wrong access code: ' + access_code);
+  logRequest(req, 'Wrong access code: ' + access_code);
         req.flash('error', '验证码不正确');
         res.redirect('/');
       }
@@ -169,10 +169,10 @@ async function updateStat(req) {
       }
       var city = getCity(req);
       if (city) {
-	stat.cities.push(city);
-	while (stat.cities.length > 1000) {
-	  stat.cities.shift();
-	}
+  stat.cities.push(city);
+  while (stat.cities.length > 1000) {
+    stat.cities.shift();
+  }
       }
       stat.save();
     }
@@ -202,24 +202,24 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
                   visit.set(key, value);
                 }
               }
-	      var cities = new Map();
-	      for(var i = 0; i < stat.cities.length; i++) {
-		var city = stat.cities[i];
-		var value = cities.get(city)
-		if (!value) {
-		  cities.set(city, 1);
-		} else {
-		  cities.set(city, value+1);
-		}
-	      }
-	      var cityData = new Array();
-	      cities.forEach(function(data, label) {
-		cityData.push({'label': label, 'data': data});
-	      });
-	      cityData.sort(function(a, b) {return b.data - a.data});
-	      for (var i = 0; i < cityData.length; i++) {
-		cityData[i].color = pieColors[i % pieColors.length];
-	      }
+        var cities = new Map();
+        for(var i = 0; i < stat.cities.length; i++) {
+    var city = stat.cities[i];
+    var value = cities.get(city)
+    if (!value) {
+      cities.set(city, 1);
+    } else {
+      cities.set(city, value+1);
+    }
+        }
+        var cityData = new Array();
+        cities.forEach(function(data, label) {
+    cityData.push({'label': label, 'data': data});
+        });
+        cityData.sort(function(a, b) {return b.data - a.data});
+        for (var i = 0; i < cityData.length; i++) {
+    cityData[i].color = pieColors[i % pieColors.length];
+        }
               res.render('admin.ejs',
                          {profiles: profiles, info: info, visit: visit,
                           title: title, cityData: cityData});
@@ -336,26 +336,26 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
     fs.rename(file.path, filepath, (err) => {
       if (err) throw err;
     });
-		var filesize = fs.statSync(filepath).size;
-		var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
-		var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
-		cloudinary.uploader.upload(
-		  filepath,
-		  {quality: quality,
-			 fetch_format: "auto",
-			 folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
-		  function(error, result) {
-				if (error) {
-					console.log(error);
-				}
-				res.send(result.secure_url);
-				fs.unlink(filepath, (err) => {
-					if (err) {
-						console.log(err);
-					}
-				});
-			}
-		);
+    var filesize = fs.statSync(filepath).size;
+    var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
+    var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+    cloudinary.uploader.upload(
+      filepath,
+      {quality: quality,
+       fetch_format: "auto",
+       folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
+      function(error, result) {
+        if (error) {
+          console.log(error);
+        }
+        res.send(result.secure_url);
+        fs.unlink(filepath, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+    );
   });
 
   // parse the incoming request containing the form data
