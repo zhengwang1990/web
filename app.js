@@ -309,7 +309,26 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
     fs.rename(file.path, filepath, (err) => {
       if (err) throw err;
     });
-    authorize(file.name, filepath, res, createFile);
+    var filesize = fs.statSync(filepath).size;
+    var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
+    var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+    cloudinary.uploader.upload(
+      filepath,
+      {quality: quality,
+       fetch_format: "auto",
+       folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
+      function(error, result) {
+        if (error) {
+          console.log(error);
+        }
+        res.send(result.secure_url);
+        fs.unlink(filepath, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+    );
   });
 
   // parse the incoming request containing the form data
@@ -336,26 +355,7 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
     fs.rename(file.path, filepath, (err) => {
       if (err) throw err;
     });
-    var filesize = fs.statSync(filepath).size;
-    var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
-    var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
-    cloudinary.uploader.upload(
-      filepath,
-      {quality: quality,
-       fetch_format: "auto",
-       folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
-      function(error, result) {
-        if (error) {
-          console.log(error);
-        }
-        res.send(result.secure_url);
-        fs.unlink(filepath, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
-      }
-    );
+		authorize(file.name, filepath, res, createVideo);
   });
 
   // parse the incoming request containing the form data
