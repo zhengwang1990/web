@@ -310,12 +310,12 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
     fs.rename(file.path, filepath, (err) => {
       if (err) throw err;
       const filesize = fs.statSync(filepath).size;
-      var quality = Math.min(Math.round(2000000 / filesize) * 10, 100);
       var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
       cloudinary.uploader.upload(
         filepath,
-        {quality: quality,
+        {quality: "auto:good",
          fetch_format: "auto",
+         format: "jpg",
          folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
         function(error, result) {
           if (error) {
