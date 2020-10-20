@@ -61,13 +61,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-cloudinary.config({
-  cloud_name: 'zhengwang',
-  api_key: '797236461388679',
-  api_secret: process.env.CLOUDINARY_SECRET
-});
-
-
 function authorize(filename, filepath, res, callback) {
   const credentials = JSON.parse(process.env.CREDENTIALS);
   const {client_secret, client_id, redirect_uris} = credentials.installed;
