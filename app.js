@@ -27,6 +27,9 @@ var Profile = require('./models/profile'),
 
 mongoose.connect(process.env.MONGODB, {
   useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
   useUnifiedTopology: true
 });
 
@@ -73,9 +76,9 @@ function authorize(filename, filepath, res, callback) {
 }
 
 function isLoggedIn(req, res, next) {
-  //if (req.isAuthenticated()) {
+  if (req.isAuthenticated()) {
     return next();
-  //}
+  }
   req.flash('error', '你需要登录才能进行操作');
   res.redirect('/login');
 }
@@ -245,7 +248,7 @@ app.put('/info_update', isLoggedIn, function(req, res) {
     req.body.info.allow_dislike = Boolean(req.body.info.allow_dislike);
     req.body.info.enable_access_code = Boolean(req.body.info.enable_access_code);
     req.body.info.enable_lastday = Boolean(req.body.info.enable_lastday);
-    info.update(req.body.info, function(err, updated_info) {
+    info.updateOne(req.body.info, function(err, updated_info) {
       if (err) {
         console.log(err);
       }
