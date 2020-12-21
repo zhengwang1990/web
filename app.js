@@ -62,7 +62,8 @@ app.use(function(req, res, next) {
 });
 
 function authorize(filename, filepath, res, callback) {
-  const credentials = JSON.parse(process.env.CREDENTIALS);
+    const credentials = JSON.parse(process.env.CREDENTIALS);
+    console.log(credentials);
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[0]);
@@ -72,9 +73,9 @@ function authorize(filename, filepath, res, callback) {
 }
 
 function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
+  //if (req.isAuthenticated()) {
     return next();
-  }
+  //}
   req.flash('error', '你需要登录才能进行操作');
   res.redirect('/login');
 }
@@ -163,10 +164,10 @@ async function updateStat(req) {
       }
       var city = getCity(req);
       if (city) {
-  stat.cities.push(city);
-  while (stat.cities.length > 1000) {
-    stat.cities.shift();
-  }
+        stat.cities.push(city);
+        while (stat.cities.length > 1000) {
+          stat.cities.shift();
+        }
       }
       stat.save();
     }
@@ -285,6 +286,60 @@ app.post('/new', isLoggedIn, function(req, res) {
   });
 });
 
+
+function upload_to_cloudinary(res, form, format, bytes_limit) {
+  form.on('file', function(field, file) {
+    var filepath = path.join(form.uploadDir, file.name);
+    fs.rename(file.path, filepath, (err) => {
+      if (err) throw err;
+      const filesize = fs.statSync(filepath).size;
+      var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+      cloudinary.uploader.upload(
+        filepath,
+        {
+          resource_type: format == 'jpg' ? 'image' : 'video',
+          quality: 'auto:good',
+          fetch_format: 'auto',
+          format: format,
+          folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
+        function(error, result) {
+          if (error) {
+            console.log(error);
+          }
+          if (result.bytes > bytes_limit) {
+            console.log('File size [' + result.bytes + '] too large. Using low quality.');
+            cloudinary.uploader.upload(
+              filepath,
+            {
+              quality: 'auto:low',
+              fetch_format: 'auto',
+              format: format,
+              folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
+            function(error, result) {
+              if (error) {
+                console.log(error);
+              }
+              res.send(result.secure_url);
+              fs.unlink(filepath, (err) => {
+                if (err) {
+                  console.log(err);
+                }
+               });
+            });
+          } else {
+            res.send(result.secure_url);
+            fs.unlink(filepath, (err) => {
+              if (err) {
+                console.log(err);
+              }
+            });
+          }
+        }
+      );
+    });
+  });
+}
+
 // upload file route
 // ref: https://coligo.io/building-ajax-file-uploader-with-node/
 app.post('/upload_image', isLoggedIn, function(req, res) {
@@ -298,32 +353,7 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
   form.uploadDir = './uploads'
 
   // every time a file has been uploaded successfully,
-  form.on('file', function(field, file) {
-    var filepath = path.join(form.uploadDir, file.name);
-    fs.rename(file.path, filepath, (err) => {
-      if (err) throw err;
-      const filesize = fs.statSync(filepath).size;
-      var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
-      cloudinary.uploader.upload(
-        filepath,
-        {quality: "auto:good",
-         fetch_format: "auto",
-         format: "jpg",
-         folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
-        function(error, result) {
-          if (error) {
-            console.log(error);
-          }
-          res.send(result.secure_url);
-          fs.unlink(filepath, (err) => {
-            if (err) {
-              console.log(err);
-            }
-          });
-        }
-      );
-    });
-  });
+  upload_to_cloudinary(res, form, 'jpg', 500000);
 
   // parse the incoming request containing the form data
   form.parse(req);
@@ -339,18 +369,8 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
   // store all uploads in the /uploads directory
   form.uploadDir = './uploads'
 
-  if (!fs.existsSync(form.uploadDir)) {
-    fs.mkdirSync(form.uploadDir);
-  }
-
   // every time a file has been uploaded successfully,
-  form.on('file', function(field, file) {
-    var filepath = path.join(form.uploadDir, file.name);
-    fs.rename(file.path, filepath, (err) => {
-      if (err) throw err;
-      authorize(file.name, filepath, res, createVideo);
-    });
-  });
+  upload_to_cloudinary(res, form, 'mp4', 1500000);
 
   // parse the incoming request containing the form data
   form.parse(req);
@@ -378,6 +398,7 @@ async function createFile(auth, filename, filepath, res) {
 }
 
 
+// [Deprecated] Upload video to Youtube
 async function createVideo(auth, filename, filepath, res) {
   const filesize = fs.statSync(filepath).size;
   const youtube = google.youtube({version: 'v3', auth});

@@ -11,7 +11,7 @@
         <div style="margin: 10px 0 10px 0;"></div>
         <label for="description">简介</label>
         <textarea  class="form-control" rows="3" id="description" name="profile[description]"><%= profile.description %></textarea>
-	<% if (info.enable_lastday) { %>
+        <% if (info.enable_lastday) { %>
         <div style="margin: 10px 0 10px 0;"></div>
         <label for="name">最后一天</label>
         <div id="sandbox-container">
@@ -22,7 +22,7 @@
             <input type="text" class="form-control" id="lastday" name="profile[lastday]" value="<%= profile.lastday %>" readonly>
           </div>
         </div>
-	<% } %>
+        <% } %>
       </div>
       </div>
       <div style="margin: 10px 0 10px 0;"></div>
@@ -57,7 +57,9 @@
             <% profile.videos.forEach(function(video, j){ %>
             <div class="col-lg-12">
               <div class="ratio-container">
-            <iframe class="video-frame" src="<%= video %>?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <video width="100%" controls>
+                  <source src="<%= video %>" type="video/mp4">
+                </video>
               </div>              
               <p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p>
             </div>

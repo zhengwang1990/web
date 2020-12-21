@@ -22,7 +22,7 @@ $("form").submit(function() {
     $("#images").val(str_img.slice(0,-1));
 
     var videos = [];
-    $("#video_row iframe").each(function(){
+    $("#video_row source").each(function(){
         videos.push($(this).attr("src").split('?')[0]);
     });
     var str_video = "";
@@ -154,7 +154,7 @@ function reloadvideo(data){
     $("#video-progress-bar").width("0%");
     $("#video_row").append('<div class="col-lg-12">\n' +
                            '<div class="ratio-container">\n' +
-                           '<iframe class="video-frame" src="' + data + '?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>\n' +
+                           '<video width="100%" controls><source src="' + data + '" type="video/mp4"></video>\n' +
                            '</div> <p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p> </div>');
     $("#upload-video-input").val(null);
 }

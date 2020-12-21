@@ -30,9 +30,9 @@
     <% if (info.enable_lastday) { %>
     <div class="my-card-body align-left">
       <span class="plain-btn">
-	<i class="fa fa-calendar-alt"></i> &thinsp;
+        <i class="fa fa-calendar-alt"></i> &thinsp;
         <% if (profile.lastday && profile.lastday.length > 5) { %> 最后一天 <%= profile.lastday.substring(5) %>  &thinsp; <% } %>
-	还剩<span class="dayleft-num" lastday="<%= profile.lastday %>"></span>天
+        还剩<span class="dayleft-num" lastday="<%= profile.lastday %>"></span>天
       </span>
       <span class="dayleft-progress" lastday="<%= profile.lastday %>"></span>
     </div>
@@ -41,8 +41,8 @@
     <div class="my-card-body align-right">
       <% if (info.allow_like) { %>
       <button type="button" id="<%= profile._id %>-like" class="btn btn-outline-dark thumbs">
-	<i id="<%= profile._id %>-like-font" class="far fa-thumbs-up fa-lg"></i> &nbsp;
-	<span id="<%= profile._id %>-like-value"><%= profile.likes %></span>
+        <i id="<%= profile._id %>-like-font" class="far fa-thumbs-up fa-lg"></i> &nbsp;
+        <span id="<%= profile._id %>-like-value"><%= profile.likes %></span>
       </button>
       <% } %>
       <% if (info.allow_like && info.allow_dislike) { %>
@@ -50,8 +50,8 @@
       <% } %>
       <% if (info.allow_dislike) { %>
       <button type="button" id="<%= profile._id %>-dislike" class="btn btn-outline-dark thumbs">
-	<i id="<%=profile._id %>-dislike-font" class="far fa-thumbs-down fa-lg"></i> &nbsp;
-	<span id="<%= profile._id %>-dislike-value"><%= profile.dislikes %></span>
+        <i id="<%=profile._id %>-dislike-font" class="far fa-thumbs-down fa-lg"></i> &nbsp;
+        <span id="<%= profile._id %>-dislike-value"><%= profile.dislikes %></span>
       </button>
       <% } %>
       &nbsp; &nbsp;
@@ -60,35 +60,37 @@
     <ul class="list-group list-group-flush">
       <% if (profile.images.length > 0) { %>
       <li class="list-group-item">
-	<div class="card-body">
-	  <div class="row text-center">
-	    <% profile.images.forEach(function(image, j){ %>
-	    <div class="col-lg-6 col-md-12">
-	      <p id="<%= "para" + String(i) + "_" + String(j) %>">
-		<a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
-		  <img src="<%= image %>" class="img-thumbnail">
-		</a>
-	      </p>
-	    </div>
-	    <% }); %>
-	  </div>
-	</div>
+        <div class="card-body">
+          <div class="row text-center">
+            <% profile.images.forEach(function(image, j){ %>
+            <div class="col-lg-6 col-md-12">
+              <p id="<%= "para" + String(i) + "_" + String(j) %>">
+                <a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
+                  <img src="<%= image %>" class="img-thumbnail">
+                </a>
+              </p>
+            </div>
+            <% }); %>
+          </div>
+        </div>
       </li>
       <% } %>
       <% if (profile.videos.length > 0) { %>
       <li class="list-group-item">
-	<div class="card-body">
-	  <% profile.videos.forEach(function(video, j) { %>
-	  <div class="row text-center">
-	    <div class="col-lg-12">
-	      <div class="ratio-container">
-		<iframe class="video-frame" src="<%= video %>?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-	      </div>
-	    </div>
-	  </div>
+        <div class="card-body">
+          <% profile.videos.forEach(function(video, j) { %>
+          <div class="row text-center">
+            <div class="col-lg-12">
+              <div class="ratio-container">
+                <video width="100%" controls>
+                  <source src="<%= video %>" type="video/mp4">
+                </video>
+              </div>
+            </div>
+          </div>
           <% if (j < profile.videos.length-1) { %> <div style="margin: 20px 0 20px 0;"></div> <% } %>
           <% }); %>
-	</div>
+        </div>
       </li>
       <% } %>
     </ul>
