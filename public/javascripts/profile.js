@@ -187,7 +187,7 @@ $("#name").on("input", function(){
         nextdate = yyyy + '-' + mm + '-' + dd;
         $("#lastday").val(nextdate);
         $("#sandbox-container .input-group").datepicker("update");
-	nextdateUpdated = true;
+        nextdateUpdated = true;
     }
 });
 

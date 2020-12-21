@@ -115,7 +115,7 @@
           <% profile.videos.forEach(function(video, j){ %>
           <div class="row text-center">
             <div class="col-lg-12">
-              <div class="ratio-container">
+              <div class="ratio-container video-wrapper">
                 <video width="100%" controls>
                   <source src="<%= video %>" type="video/mp4">
                 </video>
@@ -168,4 +168,5 @@
   <script src="/javascripts/jquery.flot.pie.js"></script>
   <script src="/javascripts/graph.js"></script>
   <script src="/javascripts/lastday.js"></script>
+  <script src="/javascripts/video_play_button.js"></script>
   <% include partials/footer.ejs %>
