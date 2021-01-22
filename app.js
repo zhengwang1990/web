@@ -200,24 +200,24 @@ app.get('/admin', isLoggedIn, function(req, res, err) {
                   visit.set(key, value);
                 }
               }
-        var cities = new Map();
-        for(var i = 0; i < stat.cities.length; i++) {
-    var city = stat.cities[i];
-    var value = cities.get(city)
-    if (!value) {
-      cities.set(city, 1);
-    } else {
-      cities.set(city, value+1);
-    }
-        }
-        var cityData = new Array();
-        cities.forEach(function(data, label) {
-    cityData.push({'label': label, 'data': data});
-        });
-        cityData.sort(function(a, b) {return b.data - a.data});
-        for (var i = 0; i < cityData.length; i++) {
-    cityData[i].color = pieColors[i % pieColors.length];
-        }
+              var cities = new Map();
+              for(var i = 0; i < stat.cities.length; i++) {
+                var city = stat.cities[i];
+                var value = cities.get(city)
+                if (!value) {
+                  cities.set(city, 1);
+                } else {
+                  cities.set(city, value+1);
+                }
+              }
+              var cityData = new Array();
+              cities.forEach(function(data, label) {
+                cityData.push({'label': label, 'data': data});
+              });
+              cityData.sort(function(a, b) {return b.data - a.data});
+              for (var i = 0; i < cityData.length; i++) {
+                cityData[i].color = pieColors[i % pieColors.length];
+              }
               res.render('admin.ejs',
                          {profiles: profiles, info: info, visit: visit,
                           title: title, cityData: cityData});
