@@ -273,6 +273,13 @@ body {
   position: relative;
 }
 
+@media (min-width: 992px) {
+.video-wrapper > video {
+  width: 650px;
+  vertical-align: middle;
+}
+
+@media (max-width: 991px) {
 .video-wrapper > video {
   width: 100%;
   vertical-align: middle;
