@@ -144,11 +144,10 @@ app.post('/access', function(req, res) {
       var access_code = req.body.access_code;
       if (access_code == info.access_code) {
         res.cookie('access', ref_access_cookie, {maxAge: 21600000});
-        renderHomePage(req, res, info);
       } else {
         req.flash('error', '验证码不正确');
-        renderAccessPage(req, res, info);
       }
+      res.redirect('/');
     }
   });
 });
