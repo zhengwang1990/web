@@ -290,7 +290,7 @@ app.post('/new', isLoggedIn, function(req, res) {
 });
 
 
-function upload_to_cloudinary(res, form, format, bytes_limit) {
+function upload_to_cloudinary(res, form, format) {
   form.on('file', function(field, file) {
     var filepath = path.join(form.uploadDir, file.name);
     fs.rename(file.path, filepath, (err) => {
@@ -304,39 +304,18 @@ function upload_to_cloudinary(res, form, format, bytes_limit) {
           quality: 'auto:good',
           fetch_format: 'auto',
           format: format,
-          folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
+          folder: process.env.CLOUDINARY_FOLDER + '/' + date_str
+        },
         function(error, result) {
           if (error) {
             console.log(error);
           }
-          if (result.bytes > bytes_limit) {
-            console.log('File size [' + result.bytes + '] too large. Using low quality.');
-            cloudinary.uploader.upload(
-              filepath,
-            {
-              quality: 'auto:low',
-              fetch_format: 'auto',
-              format: format,
-              folder: process.env.CLOUDINARY_FOLDER + '/' + date_str},
-            function(error, result) {
-              if (error) {
-                console.log(error);
-              }
-              res.send(result.secure_url);
-              fs.unlink(filepath, (err) => {
-                if (err) {
-                  console.log(err);
-                }
-               });
-            });
-          } else {
-            res.send(result.secure_url);
-            fs.unlink(filepath, (err) => {
-              if (err) {
-                console.log(err);
-              }
-            });
-          }
+          res.send(result.secure_url);
+          fs.unlink(filepath, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
         }
       );
     });
@@ -356,7 +335,7 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
   form.uploadDir = './uploads'
 
   // every time a file has been uploaded successfully,
-  upload_to_cloudinary(res, form, 'jpg', 500000);
+  upload_to_cloudinary(res, form, 'jpg');
 
   // parse the incoming request containing the form data
   form.parse(req);
@@ -373,7 +352,7 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
   form.uploadDir = './uploads'
 
   // every time a file has been uploaded successfully,
-  upload_to_cloudinary(res, form, 'mp4', 1500000);
+  upload_to_cloudinary(res, form, 'mp4');
 
   // parse the incoming request containing the form data
   form.parse(req);
