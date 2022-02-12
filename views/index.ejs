@@ -65,9 +65,7 @@
             <% profile.images.forEach(function(image, j){ %>
             <div class="col-lg-6 col-md-12">
               <p id="<%= "para" + String(i) + "_" + String(j) %>">
-                <a href= "#<%= "pic" + String(i) + "_" + String(j) %>" >
-                  <img src="<%= image %>" class="img-thumbnail">
-                </a>
+                <img src="<%= image %>" class="img-thumbnail">
               </p>
             </div>
             <% }); %>
@@ -106,15 +104,6 @@
   </div>
   <% } %>
 </div>
-
-<% profiles.forEach(function(profile, i){ %>
-<% profile.images.forEach(function(image, j){ %>
-<div class="lightbox-target" id="<%= "pic" + String(i) + "_" + String(j) %>">
-  <img src="<%= image %>">
-  <a class="lightbox-close" href="#<%= "para" + String(i) + "_" + String(j) %>"></a>
-</div>
-<% }); %>
-<% }); %>
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <script src="/javascripts/thumbs.js"></script>

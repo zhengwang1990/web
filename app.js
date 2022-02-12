@@ -2,6 +2,7 @@ var express        = require('express'),
     app            = express(),
     mongoose       = require('mongoose'),
     bodyParser     = require('body-parser'),
+    cookieParser   = require('cookie-parser'),
     methodOverride = require('method-override'),
     path           = require('path'),
     formidable     = require('formidable'),
@@ -40,6 +41,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use(flash());
+app.use(cookieParser());
 
 // passport configuration
 app.use(session({
@@ -90,6 +92,7 @@ const poems = ['十年一觉扬州梦，赢得青楼薄幸名 --- 杜牧',
                '罗襦宝带为君解，燕歌赵舞为君开 --- 卢照邻'];
 const title = process.env.TITLE;
 const header = process.env.HEADER;
+const ref_access_cookie = 'c%3ZX$CYeBA*ecxdldi@poGYojvgdf'
 
 
 function getIp(req) {
@@ -119,25 +122,44 @@ app.get('/', function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      var access_code = req.query['access_code'];
+      var access_cookie = req.cookies['access'];
       if (!info.enable_access_code ||
-          access_code == info.access_code) {
-        renderHomepage(req, res, info);
-      } else if (access_code == null) {
-  logRequest(req, 'Render access page');
-        var poem = poems[Math.floor(Math.random()*poems.length)];
-        res.render('access.ejs',
-                   {info: info, poem: poem, header: header, title: title});
+          access_cookie == ref_access_cookie) {
+        renderHomePage(req, res, info);
       } else {
-  logRequest(req, 'Wrong access code: ' + access_code);
-        req.flash('error', '验证码不正确');
-        res.redirect('/');
+        if (access_cookie != null) {
+          res.clearCookie('access');
+        }
+        renderAccessPage(req, res, info);
       }
     }
   });
 });
 
-function renderHomepage(req, res, info) {
+app.post('/access', function(req, res) {
+  Info.findOne({}, function(err, info) {
+    if (err) {
+      console.log(err);
+    } else {
+      var access_code = req.body.access_code;
+      if (access_code == info.access_code) {
+        res.cookie('access', ref_access_cookie, {maxAge: 21600000});
+      } else {
+        req.flash('error', '验证码不正确');
+      }
+      res.redirect('/');
+    }
+  });
+});
+
+function renderAccessPage(req, res, info) {
+  logRequest(req, 'Render access page');
+  var poem = poems[Math.floor(Math.random()*poems.length)];
+  res.render('access.ejs',
+             {info: info, poem: poem, header: header, title: title});
+}
+
+function renderHomePage(req, res, info) {
   Profile.find({}, function(err, profiles) {
     if (err) {
       console.log(err);
