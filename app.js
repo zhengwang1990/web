@@ -331,8 +331,10 @@ function upload_to_cloudinary(res, form, format) {
         function(error, result) {
           if (error) {
             console.log(error);
+            res.send(error.message);
+          } else {
+            res.send(result.secure_url);
           }
-          res.send(result.secure_url);
           fs.unlink(filepath, (err) => {
             if (err) {
               console.log(err);

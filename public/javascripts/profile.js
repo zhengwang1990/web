@@ -40,12 +40,18 @@ $("#upload-image-input").on("change", function(){
 
     if (files.length > 0){
         // create a FormData object which will be sent as the data payload in the
-        // AJAX request
+        //  AJAX request
         var formData = new FormData();
 
         // loop through all the selected files and add them to the formData object
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
+
+            file_size_mb = file.size / 1024 / 1024;
+            if (file_size_mb > 10) {
+                alert("图片大小不可以超过10M");
+                return;
+            }
 
             // add the files to formData object for the data payload
             formData.append("uploads[]", file, file.name);
@@ -82,6 +88,10 @@ $("#upload-image-input").on("change", function(){
 });
 
 function reloadimage(data){
+    if (!data.startsWith("http")) {
+        alert("错误: " + data);
+        return;
+    }
     $("#image-progress-bar").text("0%");
     $("#image-progress-bar").width("0%");
     $("#image_row").append('<div class="col-lg-6 col-md-12">\n' +
@@ -112,6 +122,12 @@ $("#upload-video-input").on("change", function(){
         // loop through all the selected files and add them to the formData object
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
+
+            file_size_mb = file.size / 1024 / 1024;
+            if (file_size_mb > 100) {
+                alert("视频大小不可以超过100M");
+                return;
+            }
 
             // add the files to formData object for the data payload
             formData.append("uploads[]", file, file.name);
@@ -150,6 +166,10 @@ $("#upload-video-input").on("change", function(){
 });
 
 function reloadvideo(data){
+    if (!data.startsWith("http")) {
+        alert("错误: " + data);
+        return;
+    }
     $("#video-progress-bar").text("0%");
     $("#video-progress-bar").width("0%");
     $("#video_row").append('<div class="col-lg-12">\n' +
