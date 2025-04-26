@@ -526,7 +526,7 @@ app.delete('/:id', isLoggedIn, function(req, res) {
       console.log(err);
     } else {
       profile.images.forEach((image) => delete_cloudinary_asset(image, 'image'));
-      profile.vedios.forEach((video) => delete_cloudinary_asset(video, 'video'));
+      profile.videos.forEach((video) => delete_cloudinary_asset(video, 'video'));
     }
   });
   Profile.findByIdAndRemove(req.params.id, function(err) {
