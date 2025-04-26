@@ -483,7 +483,7 @@ app.put('/:id', isLoggedIn, function(req, res) {
       });
       profile.videos.forEach((video) => {
         if (!req.body.profile.videos.includes(video)) {
-          delete_cloudinary_asset(video, "video');
+          delete_cloudinary_asset(video, 'video');
         }
       });
       Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
