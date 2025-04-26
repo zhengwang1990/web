@@ -469,6 +469,22 @@ app.put('/:id', isLoggedIn, function(req, res) {
         req.body.profile.likes = 0;
         req.body.profile.dislikes = 0;
       }
+      profile.images.forEach((image) => {
+        if (!req.body.profile.images.includes(image)) {
+          var pos = image.indexOf(process.env.CLOUDINARY_FOLDER);
+          var public_id = image.substring(pos).split('.').slice(0, -1).join('.');
+          console.log('Deleting ' + public_id);
+          cloudinary.uploader.destroy(public_id).then(result => console.log(result));
+        }
+      });
+      profile.videos.forEach((vedio) => {
+        if (!req.body.profile.videos.includes(vedio)) {
+          var pos = vedio.indexOf(process.env.CLOUDINARY_FOLDER);
+          var public_id = vedio.substring(pos).split('.').slice(0, -1).join('.');
+          console.log('Deleting ' + public_id);
+          cloudinary.uploader.destroy(public_id, {resource_type: 'video'}).then(result => console.log(result));
+        }
+      });
       Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
         if (err) {
           console.log(err);
