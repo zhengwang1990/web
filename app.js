@@ -451,7 +451,7 @@ app.get('/edit/:id', isLoggedIn, function(req, res) {
 function delete_cloudinary_asset(url, resource_type) {
   var pos = url.indexOf(process.env.CLOUDINARY_FOLDER);
   var public_id = url.substring(pos).split('.').slice(0, -1).join('.');
-  console.log('Deleting ' + public_id);
+  console.log('Deleting ' + public_id + ', resource type ' + resource_type);
   cloudinary.uploader.destroy(public_id, {resource_type: resource_type}).then(result => console.log(result));
 }
 
@@ -478,12 +478,12 @@ app.put('/:id', isLoggedIn, function(req, res) {
       }
       profile.images.forEach((image) => {
         if (!req.body.profile.images.includes(image)) {
-          delete_cloudinary_asset(image, "image");
+          delete_cloudinary_asset(image, 'image');
         }
       });
       profile.videos.forEach((video) => {
         if (!req.body.profile.videos.includes(video)) {
-          delete_cloudinary_asset(video, "video");
+          delete_cloudinary_asset(video, "video');
         }
       });
       Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
@@ -525,8 +525,8 @@ app.delete('/:id', isLoggedIn, function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      profile.images.forEach((image) => delete_cloudinary_asset(image, "image"));
-      profile.vedios.forEach((video) => delete_cloudinary_asset(video, "video"));
+      profile.images.forEach((image) => delete_cloudinary_asset(image, 'image'));
+      profile.vedios.forEach((video) => delete_cloudinary_asset(video, 'video'));
     }
   });
   Profile.findByIdAndRemove(req.params.id, function(err) {
