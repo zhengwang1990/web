@@ -481,9 +481,9 @@ app.put('/:id', isLoggedIn, function(req, res) {
           delete_cloudinary_asset(image, "image");
         }
       });
-      profile.videos.forEach((vedio) => {
-        if (!req.body.profile.videos.includes(vedio)) {
-          delete_cloudinary_asset(vedio, "vedio");
+      profile.videos.forEach((video) => {
+        if (!req.body.profile.videos.includes(video)) {
+          delete_cloudinary_asset(video, "video");
         }
       });
       Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
@@ -526,7 +526,7 @@ app.delete('/:id', isLoggedIn, function(req, res) {
       console.log(err);
     } else {
       profile.images.forEach((image) => delete_cloudinary_asset(image, "image"));
-      profile.vedios.forEach((vedio) => delete_cloudinary_asset(vedio, "vedio"));
+      profile.vedios.forEach((video) => delete_cloudinary_asset(video, "video"));
     }
   });
   Profile.findByIdAndRemove(req.params.id, function(err) {
