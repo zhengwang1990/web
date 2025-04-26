@@ -448,6 +448,13 @@ app.get('/edit/:id', isLoggedIn, function(req, res) {
   });
 });
 
+function delete_cloudinary_asset(url, resource_type) {
+  var pos = url.indexOf(process.env.CLOUDINARY_FOLDER);
+  var public_id = url.substring(pos).split('.').slice(0, -1).join('.');
+  console.log('Deleting ' + public_id);
+  cloudinary.uploader.destroy(public_id, {resource_type: resource_type}).then(result => console.log(result));
+}
+
 // update profile PUT route
 app.put('/:id', isLoggedIn, function(req, res) {
   if (req.body.profile.images) {
@@ -471,18 +478,12 @@ app.put('/:id', isLoggedIn, function(req, res) {
       }
       profile.images.forEach((image) => {
         if (!req.body.profile.images.includes(image)) {
-          var pos = image.indexOf(process.env.CLOUDINARY_FOLDER);
-          var public_id = image.substring(pos).split('.').slice(0, -1).join('.');
-          console.log('Deleting ' + public_id);
-          cloudinary.uploader.destroy(public_id).then(result => console.log(result));
+          delete_cloudinary_asset(image, "image");
         }
       });
       profile.videos.forEach((vedio) => {
         if (!req.body.profile.videos.includes(vedio)) {
-          var pos = vedio.indexOf(process.env.CLOUDINARY_FOLDER);
-          var public_id = vedio.substring(pos).split('.').slice(0, -1).join('.');
-          console.log('Deleting ' + public_id);
-          cloudinary.uploader.destroy(public_id, {resource_type: 'video'}).then(result => console.log(result));
+          delete_cloudinary_asset(vedio, "vedio");
         }
       });
       Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
@@ -520,6 +521,14 @@ app.put('/:id/thumbs/:action', function(req, res) {
 
 // destroy profile DELETE route
 app.delete('/:id', isLoggedIn, function(req, res) {
+  Profile.findById(req.params.id, function(err, profile) {
+    if (err) {
+      console.log(err);
+    } else {
+      profile.images.forEach((image) => delete_cloudinary_asset(image, "image"));
+      profile.vedios.forEach((vedio) => delete_cloudinary_asset(vedio, "vedio"));
+    }
+  });
   Profile.findByIdAndRemove(req.params.id, function(err) {
     if (err) {
       console.log(err);
