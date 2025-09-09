@@ -40,6 +40,6 @@
   "homepage": "https://github.com/zhengwang1990/web#readme",
   "description": "gallery",
   "engines": {
-    "node": "10.15.2"
+    "node": "18.19.1"
   }
 }
