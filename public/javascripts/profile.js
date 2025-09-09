@@ -1,5 +1,11 @@
 // =================== [ Images ]==============================================
 $("#image_row").on("click", "button", function(){
+    let url = $(this).closest(".image_col").find("img").attr("src");
+    fetch("/delete_asset", {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({url: url, type: "image"})
+    });
     $(this).parent().parent().remove();
 });
 
@@ -94,7 +100,7 @@ function reloadimage(data){
     }
     $("#image-progress-bar").text("0%");
     $("#image-progress-bar").width("0%");
-    $("#image_row").append('<div class="col-lg-6 col-md-12">\n' +
+    $("#image_row").append('<div class="col-lg-6 col-md-12 image_col">\n' +
                            '<p> <img src="' + data + '" class="img-thumbnail"> </p>\n'+
                            '<p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p> </div>');
     $("#upload-image-input").val(null);
@@ -102,6 +108,12 @@ function reloadimage(data){
 
 // =================== [ Videos ]==============================================
 $("#video_row").on("click", "button", function(){
+    let url = $(this).closest(".video_col").find("source").attr("src");
+    fetch("/delete_asset", {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({url: url, type: "video"})
+    });
     $(this).parent().parent().remove();
 });
 
@@ -172,7 +184,7 @@ function reloadvideo(data){
     }
     $("#video-progress-bar").text("0%");
     $("#video-progress-bar").width("0%");
-    $("#video_row").append('<div class="col-lg-12">\n' +
+    $("#video_row").append('<div class="col-lg-12 video_col">\n' +
                            '<div class="ratio-container">\n' +
                            '<video width="100%" controls><source src="' + data + '" type="video/mp4"></video>\n' +
                            '</div> <p style="margin-top:10px"> <button class="btn btn-danger btn-lg" type="button">删除</button> </p> </div>');

@@ -52,6 +52,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.json());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -427,6 +428,10 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
 
   // parse the incoming request containing the form data
   form.parse(req);
+});
+
+app.post('/delete_asset', isLoggedIn, function(req, res) {
+  delete_asset(req.body.url, req.body.type);
 });
 
 // [Deprecated] Create file in Google Drive

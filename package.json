@@ -38,7 +38,7 @@
     "url": "https://github.com/zhengwang1990/web/issues"
   },
   "homepage": "https://github.com/zhengwang1990/web#readme",
-  "description": "gallery",
+  "description": "web",
   "engines": {
     "node": "18.19.1"
   }
