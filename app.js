@@ -369,7 +369,6 @@ function upload_to_imagekit(res, form, format) {
               res.send(error.message);
             } else {
               var url = result.url + '?fileId=' + result.fileId;
-              console.log(url);
               res.send(url);
             }
             fs.unlink(filepath, (err) => {
@@ -397,7 +396,7 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
   form.uploadDir = './uploads'
 
   // every time a file has been uploaded successfully
-  if (process.env.MEDIA_PROVIDER.toUpperCase() == "IMAGEKIT") {
+  if (process.env.IMAGE_PROVIDER.toUpperCase() == "IMAGEKIT") {
     upload_to_imagekit(res, form, 'jpg');
   } else {
     upload_to_cloudinary(res, form, 'jpg');
@@ -418,7 +417,7 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
   form.uploadDir = './uploads'
 
   // every time a file has been uploaded successfully
-  if (process.env.MEDIA_PROVIDER.toUpperCase() == "IMAGEKIT") {
+  if (process.env.VEDIO_PROVIDER.toUpperCase() == "IMAGEKIT") {
     upload_to_imagekit(res, form, 'mp4');
   } else {
     upload_to_cloudinary(res, form, 'mp4');
