@@ -316,6 +316,7 @@ function upload_to_cloudinary(res, form, format) {
       if (err) throw err;
       const filesize = fs.statSync(filepath).size;
       var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+      console.log('Uploading ' + filepath + ' to cloudinary');
       cloudinary.uploader.upload(
         filepath,
         {
@@ -354,7 +355,7 @@ function upload_to_imagekit(res, form, format) {
 
         const filename = filepath.split('/').pop(); // just remove the extension
         const tags = [date_str];
-
+        console.log('Uploading ' + filepath + ' to imagekit');
         imagekit.upload(
           {
             file: data,         //required
