@@ -90,6 +90,7 @@ const title = process.env.TITLE;
 const header = process.env.HEADER;
 const ref_access_cookie = 'c%3ZX$CYeBA*ecxdldi@poGYojvgdf'
 
+geoip.startWatchingDataUpdate();
 
 function getIp(req) {
   return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
