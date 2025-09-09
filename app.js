@@ -419,7 +419,7 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
   form.uploadDir = './uploads'
 
   // every time a file has been uploaded successfully
-  if (process.env.VEDIO_PROVIDER.toUpperCase() == "IMAGEKIT") {
+  if (process.env.VIDEO_PROVIDER.toUpperCase() == "IMAGEKIT") {
     upload_to_imagekit(res, form, 'mp4');
   } else {
     upload_to_cloudinary(res, form, 'mp4');
