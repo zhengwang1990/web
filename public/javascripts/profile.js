@@ -23,7 +23,7 @@ $("form").submit(function() {
 
     var videos = [];
     $("#video_row source").each(function(){
-        videos.push($(this).attr("src").split('?')[0]);
+        videos.push($(this).attr("src"));
     });
     var str_video = "";
     videos.forEach(function(video){

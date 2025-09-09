@@ -14,7 +14,8 @@ var express        = require('express'),
     moment         = require('moment-timezone'),
     {google}       = require('googleapis'),
     geoip          = require('geoip-lite'),
-    cloudinary     = require('cloudinary').v2;
+    cloudinary     = require('cloudinary').v2,
+    ImageKit       = require("imagekit");
 
 // seed & init
 var seedDB = require('./seeds');
@@ -55,6 +56,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// Image kit
+var imagekit = new ImageKit({
+    publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey : process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint : process.env.IMAGEKIT_ENDPOINT
+});
 
 //seedDB();
 initDB();
@@ -65,17 +72,6 @@ app.use(function(req, res, next) {
   res.locals.error = req.flash('error');
   next();
 });
-
-function authorize(filename, filepath, res, callback) {
-    const credentials = JSON.parse(process.env.CREDENTIALS);
-    console.log(credentials);
-  const {client_secret, client_id, redirect_uris} = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
-  const token = process.env.TOKEN;
-  oAuth2Client.setCredentials(JSON.parse(token));
-  callback(oAuth2Client, filename, filepath, res);
-}
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
@@ -326,7 +322,7 @@ function upload_to_cloudinary(res, form, format) {
           quality: 'auto:good',
           fetch_format: 'auto',
           format: format,
-          folder: process.env.CLOUDINARY_FOLDER + '/' + date_str
+          folder: process.env.MEDIA_FOLDER + '/' + date_str
         },
         function(error, result) {
           if (error) {
@@ -346,6 +342,48 @@ function upload_to_cloudinary(res, form, format) {
   });
 }
 
+function upload_to_imagekit(res, form, format) {
+  form.on('file', function(field, file) {
+    var filepath = path.join(form.uploadDir, file.name);
+    fs.rename(file.path, filepath, (err) => {
+      if (err) throw err;
+      var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+      fs.readFile(filepath, function (err, data) {
+        if (err) throw err; // Fail if the file can't be read.
+
+        const filename = filepath.split('/').pop(); // just remove the extension
+        const tags = [date_str];
+
+        imagekit.upload(
+          {
+            file: data,         //required
+            fileName: filename, //required
+            tags: tags,         // optional
+            fileType: format == 'jpg' ? 'image' : 'non-image',
+            folder: process.env.MEDIA_FOLDER + '/' + date_str,
+            isPublished: true,
+          },
+          function (error, result) {
+            if (error) {
+              console.log(error);
+              res.send(error.message);
+            } else {
+              var url = result.url + '?fileId=' + result.fileId;
+              console.log(url);
+              res.send(url);
+            }
+            fs.unlink(filepath, (err) => {
+              if (err) {
+                console.log(err);
+              }
+            });
+          }
+        );
+      });
+    });
+  });
+}
+
 // upload file route
 // ref: https://coligo.io/building-ajax-file-uploader-with-node/
 app.post('/upload_image', isLoggedIn, function(req, res) {
@@ -358,8 +396,12 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
   // store all uploads in the /uploads directory
   form.uploadDir = './uploads'
 
-  // every time a file has been uploaded successfully,
-  upload_to_cloudinary(res, form, 'jpg');
+  // every time a file has been uploaded successfully
+  if (process.env.MEDIA_PROVIDER.toUpperCase() == "IMAGEKIT") {
+    upload_to_imagekit(res, form, 'jpg');
+  } else {
+    upload_to_cloudinary(res, form, 'jpg');
+  }
 
   // parse the incoming request containing the form data
   form.parse(req);
@@ -375,8 +417,12 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
   // store all uploads in the /uploads directory
   form.uploadDir = './uploads'
 
-  // every time a file has been uploaded successfully,
-  upload_to_cloudinary(res, form, 'mp4');
+  // every time a file has been uploaded successfully
+  if (process.env.MEDIA_PROVIDER.toUpperCase() == "IMAGEKIT") {
+    upload_to_imagekit(res, form, 'mp4');
+  } else {
+    upload_to_cloudinary(res, form, 'mp4');
+  }
 
   // parse the incoming request containing the form data
   form.parse(req);
@@ -448,11 +494,28 @@ app.get('/edit/:id', isLoggedIn, function(req, res) {
   });
 });
 
+function delete_asset(url, resource_type) {
+  if (url.includes('imagekit')) {
+    delete_imagekit_asset(url, resource_type);
+  } else {
+    delete_cloudinary_asset(url, resource_type);
+  }
+}
+
 function delete_cloudinary_asset(url, resource_type) {
-  var pos = url.indexOf(process.env.CLOUDINARY_FOLDER);
+  var pos = url.indexOf(process.env.MEDIA_FOLDER);
   var public_id = url.substring(pos).split('.').slice(0, -1).join('.');
   console.log('Deleting ' + public_id + ', resource type ' + resource_type);
   cloudinary.uploader.destroy(public_id, {resource_type: resource_type}).then(result => console.log(result));
+}
+
+function delete_imagekit_asset(url, resource_type) {
+  var fields = url.split('?fileId=');
+  if (fields.length > 1) {
+    var fileId = fields[1];
+    console.log('Deleting ' + fileId);
+    imagekit.deleteFile(fileId);
+  }
 }
 
 // update profile PUT route
@@ -478,12 +541,12 @@ app.put('/:id', isLoggedIn, function(req, res) {
       }
       profile.images.forEach((image) => {
         if (!req.body.profile.images.includes(image)) {
-          delete_cloudinary_asset(image, 'image');
+          delete_asset(image, 'image');
         }
       });
       profile.videos.forEach((video) => {
         if (!req.body.profile.videos.includes(video)) {
-          delete_cloudinary_asset(video, 'video');
+          delete_asset(video, 'video');
         }
       });
       Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
@@ -525,8 +588,8 @@ app.delete('/:id', isLoggedIn, function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      profile.images.forEach((image) => delete_cloudinary_asset(image, 'image'));
-      profile.videos.forEach((video) => delete_cloudinary_asset(video, 'video'));
+      profile.images.forEach((image) => delete_asset(image, 'image'));
+      profile.videos.forEach((video) => delete_asset(video, 'video'));
     }
   });
   Profile.findByIdAndRemove(req.params.id, function(err) {
