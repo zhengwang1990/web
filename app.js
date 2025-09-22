@@ -512,7 +512,7 @@ function delete_cloudinary_asset(url, resource_type) {
   var pos = url.indexOf(process.env.MEDIA_FOLDER);
   var public_id = url.substring(pos).split('.').slice(0, -1).join('.');
   console.log('Deleting ' + public_id + ', resource type ' + resource_type);
-  cloudinary.uploader.destroy(public_id, {resource_type: resource_type}).then(result => console.log(result));
+  cloudinary.uploader.destroy(public_id, {resource_type: resource_type}).then(result => console.log(result)).catch(error => console.error('Error', error));
 }
 
 function delete_imagekit_asset(url, resource_type) {
@@ -520,7 +520,7 @@ function delete_imagekit_asset(url, resource_type) {
   if (fields.length > 1) {
     var fileId = fields[1];
     console.log('Deleting ' + fileId);
-    imagekit.deleteFile(fileId);
+    imagekit.deleteFile(fileId).then(result => console.log('Deleted')).catch(error => console.error('Error:', error));
   }
 }
 

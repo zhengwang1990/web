@@ -1,11 +1,18 @@
 // =================== [ Images ]==============================================
+var existing_images = new Set();
+$("#image_row img").each(function(){
+    existing_images.add($(this).attr("src"));
+});
+
 $("#image_row").on("click", "button", function(){
     let url = $(this).closest(".image_col").find("img").attr("src");
-    fetch("/delete_asset", {
-        method: 'POST',
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({url: url, type: "image"})
-    });
+    if (!existing_images.has(url)) {
+        fetch("/delete_asset", {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({url: url, type: "image"})
+        });
+    }
     $(this).parent().parent().remove();
 });
 
@@ -107,13 +114,20 @@ function reloadimage(data){
 }
 
 // =================== [ Videos ]==============================================
+var existing_videos = new Set();
+$("#video_row source").each(function(){
+    existing_videos.add($(this).attr("src"));
+});
+
 $("#video_row").on("click", "button", function(){
     let url = $(this).closest(".video_col").find("source").attr("src");
-    fetch("/delete_asset", {
-        method: 'POST',
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({url: url, type: "video"})
-    });
+    if (!existing_videos.has(url)) {
+        fetch("/delete_asset", {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({url: url, type: "video"})
+        });
+    }
     $(this).parent().parent().remove();
 });
 
