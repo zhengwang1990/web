@@ -50,6 +50,7 @@ $("form").submit(function() {
 
 $("#upload-image-input").on("change", function(){
     var files = $(this).get(0).files;
+    let file_size_mb = 10;
 
     if (files.length > 0){
         // create a FormData object which will be sent as the data payload in the
@@ -70,13 +71,27 @@ $("#upload-image-input").on("change", function(){
             formData.append("uploads[]", file, file.name);
         }
 
+        let progressInterval;
+        var uploadCompleteSize = 60;
+        if (file_size_mb < 1) {
+            uploadCompleteSize = 70;
+        }
+
         $.ajax({
             url: "/upload_image",
             type: "POST",
             data: formData,
             processData: false,
             contentType: false,
-            success: reloadimage,
+            success: function(data) {
+                clearInterval(progressInterval);
+                // Set the bar to 100% instantly
+                $("#image-progress-bar").text("100%");
+                $("#image-progress-bar").width("100%");
+                setTimeout(() => {
+                    reloadimage(data);
+                }, 200);
+            },
             xhr: function() {
                 // create an XMLHttpRequest
                 var xhr = new XMLHttpRequest();
@@ -86,12 +101,26 @@ $("#upload-image-input").on("change", function(){
 
                     if (evt.lengthComputable) {
                         // calculate the percentage of upload completed
-                        var percentComplete = evt.loaded / evt.total;
-                        percentComplete = parseInt(percentComplete * 50);
+                        var percentComplete = parseInt(evt.loaded / evt.total * uploadCompleteSize);
 
                         // update the Bootstrap progress bar with the new percentage
                         $("#image-progress-bar").text(percentComplete + "%");
                         $("#image-progress-bar").width(percentComplete + "%");
+
+                        if (percentComplete == uploadCompleteSize) {
+                            // This runs when the AJAX request (upload) is finished, regardless of success/error
+                            const intervalTime = Math.max(file_size_mb - 1, 0) / 9 * 120 + 80; // 200ms per 1% for 10MB image
+
+                            // Start the progress bar animation
+                            progressInterval = setInterval(function() {
+                                // Stop the animation at 99% to wait for the actual success callback
+                                if (percentComplete < 99) {
+                                    percentComplete++;
+                                    $("#image-progress-bar").text(percentComplete + "%");
+                                    $("#image-progress-bar").width(percentComplete + "%");
+                                }
+                            }, intervalTime);
+                        }
                     }
                 }, false);
                 return xhr;
@@ -139,6 +168,7 @@ $(".upload-video-btn").on("click", function (){
 
 $("#upload-video-input").on("change", function(){
     var files = $(this).get(0).files;
+    let file_size_mb = 100;
 
     if (files.length > 0){
         // create a FormData object which will be sent as the data payload in the
@@ -150,8 +180,8 @@ $("#upload-video-input").on("change", function(){
             var file = files[i];
 
             file_size_mb = file.size / 1024 / 1024;
-            if (file_size_mb > 100) {
-                alert("视频大小不可以超过100M");
+            if (file_size_mb > 95) {
+                alert("视频大小不可以超过95M");
                 return;
             }
 
@@ -159,13 +189,24 @@ $("#upload-video-input").on("change", function(){
             formData.append("uploads[]", file, file.name);
         }
 
+        // Variable to hold the progress interval ID
+        let progressInterval;
+
         $.ajax({
             url: "/upload_video",
             type: "POST",
             data: formData,
             processData: false,
             contentType: false,
-            success: reloadvideo,
+            success: function(data) {
+                clearInterval(progressInterval);
+                // Set the bar to 100% instantly
+                $("#video-progress-bar").text("100%");
+                $("#video-progress-bar").width("100%");
+                setTimeout(() => {
+                    reloadvideo(data);
+                }, 200);
+            },
             xhr: function() {
                 // create an XMLHttpRequest
                 var xhr = new XMLHttpRequest();
@@ -175,12 +216,26 @@ $("#upload-video-input").on("change", function(){
 
                     if (evt.lengthComputable) {
                         // calculate the percentage of upload completed
-                        var percentComplete = evt.loaded / evt.total;
-                        percentComplete = parseInt(percentComplete * 50);
+                        var percentComplete = parseInt(evt.loaded / evt.total * 50);
 
                         // update the Bootstrap progress bar with the new percentage
                         $("#video-progress-bar").text(percentComplete + "%");
                         $("#video-progress-bar").width(percentComplete + "%");
+
+                        if (percentComplete == 50) {
+                            // This runs when the AJAX request (upload) is finished, regardless of success/error
+                            const intervalTime = Math.max(file_size_mb - 10, 0) / 90 * 600 + 200; // 800ms per 1% for 100MB video
+
+                            // Start the progress bar animation
+                            progressInterval = setInterval(function() {
+                                // Stop the animation at 99% to wait for the actual success callback
+                                if (percentComplete < 99) {
+                                    percentComplete++;
+                                    $("#video-progress-bar").text(percentComplete + "%");
+                                    $("#video-progress-bar").width(percentComplete + "%");
+                                }
+                            }, intervalTime);
+                        }
                     }
                 }, false);
 
