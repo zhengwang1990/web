@@ -63,6 +63,7 @@ var imagekit = new ImageKit({
     privateKey : process.env.IMAGEKIT_PRIVATE_KEY,
     urlEndpoint : process.env.IMAGEKIT_ENDPOINT
 });
+cleanup_imagekit_folders();
 
 //seedDB();
 initDB();
@@ -519,9 +520,40 @@ function delete_imagekit_asset(url, resource_type) {
   var fields = url.split('?fileId=');
   if (fields.length > 1) {
     var fileId = fields[1];
-    console.log('Deleting ' + fileId);
-    imagekit.deleteFile(fileId).then(result => console.log('Deleted')).catch(error => console.error('Error:', error));
+    var fileName = fields[0].split('/').slice(-3).join('/');
+    console.log(`Deleting ${fileName} with ID ${fileId}`);
+    imagekit.deleteFile(fileId).then(result => console.log(`Deleted ${fileName}`)).catch(error => console.error('Error:', error));
   }
+}
+
+async function cleanup_imagekit_folders() {
+  var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
+  imagekit.listFiles({
+    'path': process.env.MEDIA_FOLDER,
+    'fileType': 'all',
+    'type': 'folder',
+  }).then(results => {
+    results.forEach(result => {
+      if (result.name == date_str) {
+        // Do not delete today's folder in case an uploading is running
+        return;
+      }
+      var folder_name = process.env.MEDIA_FOLDER + '/' + result.name;
+      imagekit.listFiles({
+        'path': folder_name,
+        'fileType': 'all',
+        'type': 'all',
+      }).then(files => {
+        if (files.length === 0) {
+          imagekit.deleteFolder(folder_name)
+            .then(result => console.log(`Folder ${folder_name} deleted`))
+            .catch(error => console.error(`Error deleting ${folder_name}`, error));
+        } else {
+          console.log(`Folder ${folder_name} has ${files.length} files`)
+        }
+      }).catch(error => console.error(`Error listing ${folder_name}`, error));
+    });
+  }).catch(error => console.error(`Error listing ${process.env.MEDIA_FOLDER}`, error));
 }
 
 // update profile PUT route
@@ -626,9 +658,13 @@ app.post('/login', passport.authenticate('local',
 
 // logout route
 app.get('/logout', function(req, res) {
-  req.logout();
-  req.flash('success', '你已经退出登录');
-  res.redirect('/');
+  req.logout(err => {
+    if (err) {
+      console.log(err);
+    }
+    req.flash('success', '你已经退出登录');
+    res.redirect('/');
+  });
 });
 
 
