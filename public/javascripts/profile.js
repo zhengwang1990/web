@@ -240,3 +240,38 @@ $("#name").on("input", function(){
 $("#lastday").on("change", function(){
     nextdateUpdated = true;
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const textarea = document.getElementById('description');
+
+  function autoExpand(element) {
+    // 1. Reset height to 'auto' to ensure the correct scrollHeight is calculated.
+    element.style.height = 'auto';
+
+    // 2. Set height to scrollHeight (content height).
+    const scrollHeight = element.scrollHeight;
+    element.style.height = scrollHeight + 'px';
+
+    // 3. Max Height Logic:
+    // Get the computed max-height from CSS.
+    const maxH = parseFloat(window.getComputedStyle(element).maxHeight);
+
+    if (maxH && scrollHeight > maxH) {
+      // If content exceeds max-height, keep height at max-height and show scrollbar
+      element.style.height = maxH + 'px';
+      element.style.overflowY = 'scroll';
+    } else {
+      // Otherwise, keep height at scrollHeight and hide scrollbar
+      element.style.overflowY = 'hidden';
+    }
+  }
+
+  // Event listener to trigger the expansion on 'input' (when text changes)
+  textarea.addEventListener('input', function() {
+    autoExpand(this);
+  });
+
+  // Run once on page load to set the correct height for pre-filled content
+  autoExpand(textarea);
+});

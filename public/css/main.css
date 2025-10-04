@@ -11,7 +11,6 @@
   width: 95%;
   padding-top: 20px;
   margin: auto;
-  align: center;
 }
 .video-frame {
   position:  absolute;
@@ -278,9 +277,29 @@ body {
   width: 650px;
   vertical-align: middle;
 }
+}
 
 @media (max-width: 991px) {
 .video-wrapper > video {
   width: 100%;
   vertical-align: middle;
+}
+}
+
+#description {
+  /* Enforce a maximum height of 10 lines (adjust the '240px' value as needed) */
+  /* This value is an estimate. To be exact, measure the height of 10 lines in your browser. */
+  max-height: 240px; /* Example: If one line is 24px tall, 10 lines is 240px */
+
+  /* Set initial height to 3 rows */
+  height: auto;
+
+  /* Important: Prevent user from manually resizing */
+  resize: none;
+
+  /* Optional: Smooth transition for the height change */
+  transition: height 0.2s ease-out;
+
+  /* Start with overflow hidden for the auto-expansion */
+  overflow-y: hidden;
 }
