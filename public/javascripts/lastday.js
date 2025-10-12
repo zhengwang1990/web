@@ -21,7 +21,7 @@ $(document).ready(function(){
         var dayleft = getDayLeft(lastday);
         var html = "";
         for (var i = 0; i < dayleft; i++){
-            html += "&thinsp; <span class='progress-span'></span>"
+            html += "&thinsp; <span class='progress-span'><i class='fa fa-circle' aria-hidden='true'></i></span>"
         }
 	$(this).html(html);
     });

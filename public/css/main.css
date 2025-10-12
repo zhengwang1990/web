@@ -214,10 +214,7 @@ body {
 .progress-span {
   display: inline-block;
   height: 25px;
-  width: 15px;
-  background-color: #dbdbdb;
-  border: 1px solid black;
-  border-radius: 4px;
+  color: #949494c0;
   vertical-align: middle;
 }
 
@@ -287,9 +284,9 @@ body {
 }
 
 #description {
-  /* Enforce a maximum height of 10 lines (adjust the '240px' value as needed) */
-  /* This value is an estimate. To be exact, measure the height of 10 lines in your browser. */
-  max-height: 240px; /* Example: If one line is 24px tall, 10 lines is 240px */
+  /* Enforce a maximum height of 12 lines (adjust the '288px' value as needed) */
+  /* This value is an estimate. To be exact, measure the height of 12 lines in your browser. */
+  max-height: 288px; /* Example: If one line is 24px tall, 12 lines is 288px */
 
   /* Set initial height to 3 rows */
   height: auto;
