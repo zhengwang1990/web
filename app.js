@@ -35,23 +35,12 @@ mongoose.connect(process.env.MONGODB, {
   useUnifiedTopology: true
 });
 
-var pieColors = ['#d94f7c', '#f28aa8', '#b93a65', '#f7b3c6', '#e8846b',
-     '#c47fa6', '#f0a9a0', '#9b5670', '#f4c6a8'];
+var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67', '#549abf',
+     '#798584', '#cf8091', '#c474c0', '#ff8811'];
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
-
-// Cache-busting URLs for local static files: asset('/css/main.css') -> '/css/main.css?v=<mtime>'.
-// The version changes whenever the file changes, so browsers re-fetch it instead of using a stale cache.
-app.locals.asset = function(url) {
-  try {
-    var mtime = fs.statSync(path.join(path.resolve('public'), url)).mtimeMs;
-    return url + '?v=' + Math.floor(mtime).toString(36);
-  } catch (e) {
-    return url;
-  }
-};
 app.use(flash());
 app.use(cookieParser());
 
@@ -109,39 +98,12 @@ function getIp(req) {
   return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
 }
 
-// IP geolocation is only reliable down to the state level (city is often the ISP's hub),
-// so record the US state name, or the country name for visitors outside the US.
-const US_STATES = {
-  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
-  CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'District of Columbia',
-  FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois',
-  IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana',
-  ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota',
-  MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada',
-  NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York',
-  NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon',
-  PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota',
-  TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia',
-  WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
-  PR: 'Puerto Rico'
-};
-const countryNames = new Intl.DisplayNames(['en'], {type: 'region'});
-
 function getCity(req) {
   var ip = getIp(req);
   if (ip) {
     var loc = geoip.lookup(ip);
     if (loc) {
-      if (loc.country == 'US' && US_STATES[loc.region]) {
-        return US_STATES[loc.region];
-      }
-      if (loc.country) {
-        try {
-          return countryNames.of(loc.country);
-        } catch (e) {
-          return loc.country;
-        }
-      }
+      return loc.city;
     }
   }
 }

@@ -23,10 +23,9 @@
     <h4 class="card-header simhei zero-padding">
       <span class="left-card-header"><b><%= i+1 %></b></span>
       <span class="right-card-header"><%= profile.name %></span>
-      <%- include ("partials/love.ejs") %>
     </h4>
     <div class="card-body">
-      <h4 class="card-text simsun profile-desc"> <%= profile.description %> </h4>
+      <h4 class="card-text simsun"> <%= profile.description %> </h4>
     </div>
     <% if (info.enable_lastday) { %>
     <div class="my-card-body align-left">
@@ -107,6 +106,6 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-<script src="<%= asset('/javascripts/thumbs.js') %>"></script>
-<script src="<%= asset('/javascripts/lastday.js') %>"></script>
+<script src="/javascripts/thumbs.js"></script>
+<script src="/javascripts/lastday.js"></script>
 <%- include ("partials/footer.ejs") %>

@@ -24,7 +24,7 @@ $(document).ready(function () {
       shadowSize: 0
     },
     grid: {
-      color: '#8f7580',
+      color: '#646464',
       borderColor: 'transparent',
       borderWidth: 20,
       hoverable: true
@@ -52,7 +52,7 @@ $(document).ready(function () {
       shadowSize: 0
     },
     grid: {
-      color: '#8f7580',
+      color: '#646464',
       borderColor: 'transparent',
       borderWidth: 20,
       hoverable: true
