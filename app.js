@@ -98,7 +98,43 @@ const title = process.env.TITLE;
 const header = process.env.HEADER;
 const ref_access_cookie = 'c%3ZX$CYeBA*ecxdldi@poGYojvgdf'
 
-geoip.startWatchingDataUpdate();
+// Reload geoip data in memory whenever the data files change
+geoip.startWatchingDataUpdate(err => {
+  if (err) console.log('geoip reload failed', err);
+  else console.log('geoip data reloaded');
+});
+
+// The start script downloads fresh GeoLite data at startup; refresh it every 30 days.
+// The updater runs as a child process so its memory use stays out of the server.
+const GEOIP_UPDATE_INTERVAL = 30 * 24 * 60 * 60 * 1000;
+let geoipLastUpdate = Date.now();
+let geoipUpdating = false;
+function updateGeoipData() {
+  if (!process.env.GEOLITE_LICENSE) {
+    console.log('GEOLITE_LICENSE not set, skipping geoip update');
+    return;
+  }
+  if (geoipUpdating) return;
+  geoipUpdating = true;
+  console.log('Updating geoip data');
+  const updater = require('child_process').spawn(process.execPath, [
+    require.resolve('geoip-lite/scripts/updatedb.js'),
+    'license_key=' + process.env.GEOLITE_LICENSE
+  ], {stdio: ['ignore', 'ignore', 'inherit']});
+  updater.on('close', code => {
+    geoipUpdating = false;
+    if (code === 0) {
+      geoipLastUpdate = Date.now();
+      console.log('geoip data update finished');
+    } else {
+      console.log('geoip data update failed with code ' + code);
+    }
+  });
+}
+// setInterval can't take 30 days (max ~24.8), so check daily
+setInterval(() => {
+  if (Date.now() - geoipLastUpdate >= GEOIP_UPDATE_INTERVAL) updateGeoipData();
+}, 24 * 60 * 60 * 1000).unref();
 
 // Behind proxies (Cloudflare, Coolify's Traefik), X-Forwarded-For is
 // "client, proxy1, proxy2", so the visitor is the first entry, not the last.
@@ -108,12 +144,37 @@ function getIp(req) {
          req.socket.remoteAddress;
 }
 
+const US_STATES = {
+  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+  CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'District of Columbia',
+  FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois',
+  IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana',
+  ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota',
+  MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada',
+  NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York',
+  NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon',
+  PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota',
+  TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia',
+  WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+  PR: 'Puerto Rico'
+};
+const countryNames = new Intl.DisplayNames(['en'], {type: 'region'});
+
 function getCity(req) {
   var ip = getIp(req);
   if (ip) {
     var loc = geoip.lookup(ip);
     if (loc) {
-      return loc.city;
+      if (loc.country == 'US' && US_STATES[loc.region]) {
+        return US_STATES[loc.region];
+      }
+      if (loc.country) {
+        try {
+          return countryNames.of(loc.country);
+        } catch (e) {
+          return loc.country;
+        }
+      }
     }
   }
 }
