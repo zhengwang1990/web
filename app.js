@@ -100,8 +100,12 @@ const ref_access_cookie = 'c%3ZX$CYeBA*ecxdldi@poGYojvgdf'
 
 geoip.startWatchingDataUpdate();
 
+// Behind proxies (Cloudflare, Coolify's Traefik), X-Forwarded-For is
+// "client, proxy1, proxy2", so the visitor is the first entry, not the last.
 function getIp(req) {
-  return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.socket.remoteAddress;
+  return req.headers['cf-connecting-ip'] ||
+         (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+         req.socket.remoteAddress;
 }
 
 function getCity(req) {
