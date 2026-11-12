@@ -3,44 +3,26 @@ var Profile = require("./models/profile"),
     User    = require("./models/user"),
     Stat    = require('./models/stat');
 
-function initDB() {
-  Info.find({}, function(err, infos) {
-    if (err) throw err;
-    if (infos.length != 1) {
-      Info.remove({}, function(err){
-        if (err) throw err;
-        Info.create({}, function(err, info){
-          if (err) throw err;
-        });
-      });
-    }
-  });
+async function initDB() {
+  var infos = await Info.find({});
+  if (infos.length != 1) {
+    await Info.deleteMany({});
+    await Info.create({});
+  }
 
-  Stat.find({}, function(err, stats) {
-    if (err) throw err;
-    if (stats.length != 1) {
-      Stat.remove({}, function(err) {
-        if (err) throw err;
-        Stat.create({homepage: {}}, function(err, stat){
-          if (err) throw err;
-        });
-      });
-    }
-  });
+  var stats = await Stat.find({});
+  if (stats.length != 1) {
+    await Stat.deleteMany({});
+    await Stat.create({homepage: {}});
+  }
 
-  User.find({}, function(err, users) {
-    if (err) throw err;
-    if (users.length != 1) {
-      User.remove({}, function(err) {
-        if (err) throw err;
-        if (!process.env.USERNAME) throw new Error('username not provided');
-        var newUser = new User({username: process.env.USERNAME});
-        User.register(newUser, process.env.PASSWORD, function(err, user){
-          if (err) throw err;
-        });
-      });
-    }
-  });
+  var users = await User.find({});
+  if (users.length != 1) {
+    await User.deleteMany({});
+    if (!process.env.USERNAME) throw new Error('username not provided');
+    var newUser = new User({username: process.env.USERNAME});
+    await User.register(newUser, process.env.PASSWORD);
+  }
 }
 
 module.exports = initDB;

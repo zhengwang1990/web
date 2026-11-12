@@ -1,11 +1,10 @@
 var express        = require('express'),
     app            = express(),
     mongoose       = require('mongoose'),
-    bodyParser     = require('body-parser'),
     cookieParser   = require('cookie-parser'),
     methodOverride = require('method-override'),
     path           = require('path'),
-    formidable     = require('formidable'),
+    {formidable}   = require('formidable'),
     fs             = require('fs'),
     passport       = require('passport'),
     LocalStrategy  = require('passport-local'),
@@ -15,7 +14,7 @@ var express        = require('express'),
     {google}       = require('googleapis'),
     geoip          = require('geoip-lite'),
     cloudinary     = require('cloudinary').v2,
-    ImageKit       = require("imagekit");
+    ImageKit       = require('@imagekit/nodejs').default;
 
 // seed & init
 var seedDB = require('./seeds');
@@ -27,18 +26,12 @@ var Profile = require('./models/profile'),
     User    = require('./models/user'),
     Stat    = require('./models/stat');
 
-mongoose.connect(process.env.MONGODB, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-  useUnifiedTopology: true
-});
+mongoose.connect(process.env.MONGODB).catch(err => console.log(err));
 
 var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67', '#549abf',
      '#798584', '#cf8091', '#c474c0', '#ff8811'];
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use(flash());
@@ -59,14 +52,12 @@ passport.deserializeUser(User.deserializeUser());
 
 // Image kit
 var imagekit = new ImageKit({
-    publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
-    privateKey : process.env.IMAGEKIT_PRIVATE_KEY,
-    urlEndpoint : process.env.IMAGEKIT_ENDPOINT
+    privateKey : process.env.IMAGEKIT_PRIVATE_KEY
 });
 cleanup_imagekit_folders();
 
 //seedDB();
-initDB();
+initDB().catch(err => console.log(err));
 
 app.use(function(req, res, next) {
   res.locals.currentUser = req.user;
@@ -95,7 +86,7 @@ const ref_access_cookie = 'c%3ZX$CYeBA*ecxdldi@poGYojvgdf'
 geoip.startWatchingDataUpdate();
 
 function getIp(req) {
-  return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.connection.remoteAddress;
+  return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() || req.socket.remoteAddress;
 }
 
 function getCity(req) {
@@ -115,40 +106,30 @@ function logRequest(req, message) {
 }
 
 // homepage
-app.get('/', function(req, res) {
+app.get('/', async function(req, res) {
   logRequest(req, 'GET / is requested');
-  Info.findOne({}, function(err, info) {
-    if (err) {
-      console.log(err);
-    } else {
-      var access_cookie = req.cookies['access'];
-      if (!info.enable_access_code ||
-          access_cookie == ref_access_cookie) {
-        renderHomePage(req, res, info);
-      } else {
-        if (access_cookie != null) {
-          res.clearCookie('access');
-        }
-        renderAccessPage(req, res, info);
-      }
+  var info = await Info.findOne({});
+  var access_cookie = req.cookies['access'];
+  if (!info.enable_access_code ||
+      access_cookie == ref_access_cookie) {
+    await renderHomePage(req, res, info);
+  } else {
+    if (access_cookie != null) {
+      res.clearCookie('access');
     }
-  });
+    renderAccessPage(req, res, info);
+  }
 });
 
-app.post('/access', function(req, res) {
-  Info.findOne({}, function(err, info) {
-    if (err) {
-      console.log(err);
-    } else {
-      var access_code = req.body.access_code;
-      if (access_code == info.access_code) {
-        res.cookie('access', ref_access_cookie, {maxAge: 21600000});
-      } else {
-        req.flash('error', '验证码不正确');
-      }
-      res.redirect('/');
-    }
-  });
+app.post('/access', async function(req, res) {
+  var info = await Info.findOne({});
+  var access_code = req.body.access_code;
+  if (access_code == info.access_code) {
+    res.cookie('access', ref_access_cookie, {maxAge: 21600000});
+  } else {
+    req.flash('error', '验证码不正确');
+  }
+  res.redirect('/');
 });
 
 function renderAccessPage(req, res, info) {
@@ -158,139 +139,103 @@ function renderAccessPage(req, res, info) {
              {info: info, poem: poem, header: header, title: title});
 }
 
-function renderHomePage(req, res, info) {
-  Profile.find({}, function(err, profiles) {
-    if (err) {
-      console.log(err);
-    } else {
-      logRequest(req, 'Render home page');
-      var poem = poems[Math.floor(Math.random()*poems.length)];
-      res.render('index.ejs',
-                 {profiles: profiles, info: info, poem: poem,
-                  header: header, title: title});
-    }
-  });
+async function renderHomePage(req, res, info) {
   // update stat
-  updateStat(req);
+  updateStat(req).catch(err => console.log(err));
+  var profiles = await Profile.find({});
+  logRequest(req, 'Render home page');
+  var poem = poems[Math.floor(Math.random()*poems.length)];
+  res.render('index.ejs',
+             {profiles: profiles, info: info, poem: poem,
+              header: header, title: title});
 }
 
 async function updateStat(req) {
   var today = moment.tz('America/Los_Angeles').format('YYYY/MM/DD UTC');
-  Stat.findOne({}, function(err, stat) {
-    if (err) {
-      console.log(err);
-    } else {
-      value = stat.homepage.get(today);
-      if (!value) {
-        stat.homepage.set(today, 1);
-      } else {
-        stat.homepage.set(today, value+1);
-      }
-      var city = getCity(req);
-      if (city) {
-        stat.cities.push(city);
-        while (stat.cities.length > 1000) {
-          stat.cities.shift();
-        }
-      }
-      stat.save();
+  var stat = await Stat.findOne({});
+  var value = stat.homepage.get(today);
+  if (!value) {
+    stat.homepage.set(today, 1);
+  } else {
+    stat.homepage.set(today, value+1);
+  }
+  var city = getCity(req);
+  if (city) {
+    stat.cities.push(city);
+    while (stat.cities.length > 1000) {
+      stat.cities.shift();
     }
-  });
+  }
+  await stat.save();
 }
 
 // admin page
-app.get('/admin', isLoggedIn, function(req, res, err) {
-  Profile.find({}, function(err, profiles) {
-    if (err) {
-      console.log(err);
-    } else {
-      Info.findOne({}, function(err, info) {
-        if (err) {
-          console.log(err);
-        } else {
-          Stat.findOne({}, function(err, stat) {
-            if (err) {
-              console.log(err);
-            } else {
-              var current = moment.tz('America/Los_Angeles').add(1, 'day');
-              var visit = new Map();
-              for(var i = 0; i < 365; i++) {
-                var key = current.add(-1, 'day').format('YYYY/MM/DD UTC');
-                var value = stat.homepage.get(key);
-                if (value) {
-                  visit.set(key, value);
-                }
-              }
-              var cities = new Map();
-              for(var i = 0; i < stat.cities.length; i++) {
-                var city = stat.cities[i];
-                var value = cities.get(city)
-                if (!value) {
-                  cities.set(city, 1);
-                } else {
-                  cities.set(city, value+1);
-                }
-              }
-              var cityData = new Array();
-              cities.forEach(function(data, label) {
-                cityData.push({'label': label, 'data': data});
-              });
-              cityData.sort(function(a, b) {return b.data - a.data});
-              for (var i = 0; i < cityData.length; i++) {
-                cityData[i].color = pieColors[i % pieColors.length];
-              }
-              res.render('admin.ejs',
-                         {profiles: profiles, info: info, visit: visit,
-                          title: title, cityData: cityData});
-            }
-          });
-        }
-      });
+app.get('/admin', isLoggedIn, async function(req, res) {
+  var profiles = await Profile.find({});
+  var info = await Info.findOne({});
+  var stat = await Stat.findOne({});
+  var current = moment.tz('America/Los_Angeles').add(1, 'day');
+  var visit = new Map();
+  for(var i = 0; i < 365; i++) {
+    var key = current.add(-1, 'day').format('YYYY/MM/DD UTC');
+    var value = stat.homepage.get(key);
+    if (value) {
+      visit.set(key, value);
     }
+  }
+  var cities = new Map();
+  for(var i = 0; i < stat.cities.length; i++) {
+    var city = stat.cities[i];
+    var value = cities.get(city)
+    if (!value) {
+      cities.set(city, 1);
+    } else {
+      cities.set(city, value+1);
+    }
+  }
+  var cityData = new Array();
+  cities.forEach(function(data, label) {
+    cityData.push({'label': label, 'data': data});
   });
+  cityData.sort(function(a, b) {return b.data - a.data});
+  for (var i = 0; i < cityData.length; i++) {
+    cityData[i].color = pieColors[i % pieColors.length];
+  }
+  res.render('admin.ejs',
+             {profiles: profiles, info: info, visit: visit,
+              title: title, cityData: cityData});
 });
 
 // edit info GET form
-app.get('/info_update', isLoggedIn, function(req, res) {
-  Info.findOne({}, function(err, info) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render('info_update.ejs', {info: info, title: title});
-    }
-  });
+app.get('/info_update', isLoggedIn, async function(req, res) {
+  var info = await Info.findOne({});
+  res.render('info_update.ejs', {info: info, title: title});
 });
 
 // update info PUT route
-app.put('/info_update', isLoggedIn, function(req, res) {
-  Info.findOne({}, function(err, info) {
-    req.body.info.show_notice = Boolean(req.body.info.show_notice);
-    req.body.info.allow_like = Boolean(req.body.info.allow_like);
-    req.body.info.allow_dislike = Boolean(req.body.info.allow_dislike);
-    req.body.info.enable_access_code = Boolean(req.body.info.enable_access_code);
-    req.body.info.enable_lastday = Boolean(req.body.info.enable_lastday);
-    info.updateOne(req.body.info, function(err, updated_info) {
-      if (err) {
-        console.log(err);
-      }
-    });
-    res.redirect('/admin');
-  });
+app.put('/info_update', isLoggedIn, async function(req, res) {
+  var info = await Info.findOne({});
+  req.body.info.show_notice = Boolean(req.body.info.show_notice);
+  req.body.info.allow_like = Boolean(req.body.info.allow_like);
+  req.body.info.allow_dislike = Boolean(req.body.info.allow_dislike);
+  req.body.info.enable_access_code = Boolean(req.body.info.enable_access_code);
+  req.body.info.enable_lastday = Boolean(req.body.info.enable_lastday);
+  try {
+    await info.updateOne(req.body.info);
+  } catch (err) {
+    console.log(err);
+  }
+  res.redirect('/admin');
 });
 
 // create NEW profile GET form
-app.get('/new', isLoggedIn, function(req, res) {
-  Info.findOne({}, function(err, info) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render('new.ejs', {title: title, info: info});
-    }
-  });
+app.get('/new', isLoggedIn, async function(req, res) {
+  var info = await Info.findOne({});
+  res.render('new.ejs', {title: title, info: info});
 });
 
 // create NEW profile post route
-app.post('/new', isLoggedIn, function(req, res) {
+app.post('/new', isLoggedIn, async function(req, res) {
   if (req.body.profile.images) {
     req.body.profile.images = req.body.profile.images.split(';');
   } else {
@@ -301,20 +246,17 @@ app.post('/new', isLoggedIn, function(req, res) {
   } else {
     req.body.profile.videos = [];
   }
-  Profile.create(req.body.profile, function(err) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.redirect('admin');
-    };
-  });
+  await Profile.create(req.body.profile);
+  res.redirect('admin');
 });
 
 
+const UPLOAD_DIR = './uploads';
+
 function upload_to_cloudinary(res, form, format) {
   form.on('file', function(field, file) {
-    var filepath = path.join(form.uploadDir, file.name);
-    fs.rename(file.path, filepath, (err) => {
+    var filepath = path.join(UPLOAD_DIR, path.basename(file.originalFilename));
+    fs.rename(file.filepath, filepath, (err) => {
       if (err) throw err;
       const filesize = fs.statSync(filepath).size;
       var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
@@ -348,40 +290,30 @@ function upload_to_cloudinary(res, form, format) {
 
 function upload_to_imagekit(res, form, format) {
   form.on('file', function(field, file) {
-    var filepath = path.join(form.uploadDir, file.name);
-    fs.rename(file.path, filepath, (err) => {
+    var filepath = path.join(UPLOAD_DIR, path.basename(file.originalFilename));
+    fs.rename(file.filepath, filepath, (err) => {
       if (err) throw err;
       var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
-      fs.readFile(filepath, function (err, data) {
-        if (err) throw err; // Fail if the file can't be read.
-
-        const filename = filepath.split('/').pop(); // just remove the extension
-        const tags = [date_str];
-        console.log('Uploading ' + filepath + ' to imagekit');
-        imagekit.upload(
-          {
-            file: data,         //required
-            fileName: filename, //required
-            tags: tags,         // optional
-            fileType: format == 'jpg' ? 'image' : 'non-image',
-            folder: process.env.MEDIA_FOLDER + '/' + date_str,
-            isPublished: true,
-          },
-          function (error, result) {
-            if (error) {
-              console.log(error);
-              res.send(error.message);
-            } else {
-              var url = result.url + '?fileId=' + result.fileId;
-              res.send(url);
-            }
-            fs.unlink(filepath, (err) => {
-              if (err) {
-                console.log(err);
-              }
-            });
+      const filename = path.basename(filepath);
+      const tags = [date_str];
+      console.log('Uploading ' + filepath + ' to imagekit');
+      imagekit.files.upload({
+        file: fs.createReadStream(filepath),
+        fileName: filename,
+        tags: tags,
+        folder: process.env.MEDIA_FOLDER + '/' + date_str,
+        isPublished: true,
+      }).then(result => {
+        res.send(result.url + '?fileId=' + result.fileId);
+      }).catch(error => {
+        console.log(error);
+        res.send(error.message);
+      }).finally(() => {
+        fs.unlink(filepath, (err) => {
+          if (err) {
+            console.log(err);
           }
-        );
+        });
       });
     });
   });
@@ -391,13 +323,8 @@ function upload_to_imagekit(res, form, format) {
 // ref: https://coligo.io/building-ajax-file-uploader-with-node/
 app.post('/upload_image', isLoggedIn, function(req, res) {
   // create an incoming form object
-  var form = new formidable.IncomingForm();
-
-  // specify that we want to allow the user to upload multiple files in a single request
-  form.multiples = false;
-
-  // store all uploads in the /uploads directory
-  form.uploadDir = './uploads'
+  // single file per request, stored in the /uploads directory
+  var form = formidable({uploadDir: UPLOAD_DIR, maxFiles: 1});
 
   // every time a file has been uploaded successfully
   if (process.env.IMAGE_PROVIDER.toUpperCase() == "IMAGEKIT") {
@@ -407,18 +334,16 @@ app.post('/upload_image', isLoggedIn, function(req, res) {
   }
 
   // parse the incoming request containing the form data
-  form.parse(req);
+  form.parse(req).catch(err => {
+    console.log(err);
+    if (!res.headersSent) res.status(400).send(err.message);
+  });
 });
 
 app.post('/upload_video', isLoggedIn, function(req, res) {
   // create an incoming form object
-  var form = new formidable.IncomingForm();
-
-  // specify that we want to allow the user to upload multiple files in a single request
-  form.multiples = false;
-
-  // store all uploads in the /uploads directory
-  form.uploadDir = './uploads'
+  // single file per request, stored in the /uploads directory
+  var form = formidable({uploadDir: UPLOAD_DIR, maxFiles: 1});
 
   // every time a file has been uploaded successfully
   if (process.env.VIDEO_PROVIDER.toUpperCase() == "IMAGEKIT") {
@@ -428,11 +353,15 @@ app.post('/upload_video', isLoggedIn, function(req, res) {
   }
 
   // parse the incoming request containing the form data
-  form.parse(req);
+  form.parse(req).catch(err => {
+    console.log(err);
+    if (!res.headersSent) res.status(400).send(err.message);
+  });
 });
 
 app.post('/delete_asset', isLoggedIn, function(req, res) {
   delete_asset(req.body.url, req.body.type);
+  res.sendStatus(204);
 });
 
 // [Deprecated] Create file in Google Drive
@@ -485,20 +414,10 @@ async function createVideo(auth, filename, filepath, res) {
 }
 
 // edit profile GET form
-app.get('/edit/:id', isLoggedIn, function(req, res) {
-  Profile.findById(req.params.id, function(err, profile) {
-    if (err) {
-      console.log(err);
-    } else {
-      Info.findOne({}, function(err, info) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.render('edit.ejs', {profile: profile, title: title, info: info});
-        }
-      });
-    }
-  });
+app.get('/edit/:id', isLoggedIn, async function(req, res) {
+  var profile = await Profile.findById(req.params.id);
+  var info = await Info.findOne({});
+  res.render('edit.ejs', {profile: profile, title: title, info: info});
 });
 
 function delete_asset(url, resource_type) {
@@ -522,13 +441,13 @@ function delete_imagekit_asset(url, resource_type) {
     var fileId = fields[1];
     var fileName = fields[0].split('/').slice(-3).join('/');
     console.log(`Deleting ${fileName} with ID ${fileId}`);
-    imagekit.deleteFile(fileId).then(result => console.log(`Deleted ${fileName}`)).catch(error => console.error('Error:', error));
+    imagekit.files.delete(fileId).then(result => console.log(`Deleted ${fileName}`)).catch(error => console.error('Error:', error));
   }
 }
 
 async function cleanup_imagekit_folders() {
   var date_str = new Date().toISOString().replace(/\T.+/, '').replace(/-/g, '');
-  imagekit.listFiles({
+  imagekit.assets.list({
     'path': process.env.MEDIA_FOLDER,
     'fileType': 'all',
     'type': 'folder',
@@ -539,13 +458,13 @@ async function cleanup_imagekit_folders() {
         return;
       }
       var folder_name = process.env.MEDIA_FOLDER + '/' + result.name;
-      imagekit.listFiles({
+      imagekit.assets.list({
         'path': folder_name,
         'fileType': 'all',
         'type': 'all',
       }).then(files => {
         if (files.length === 0) {
-          imagekit.deleteFolder(folder_name)
+          imagekit.folders.delete({folderPath: folder_name})
             .then(result => console.log(`Folder ${folder_name} deleted`))
             .catch(error => console.error(`Error deleting ${folder_name}`, error));
         } else {
@@ -557,7 +476,7 @@ async function cleanup_imagekit_folders() {
 }
 
 // update profile PUT route
-app.put('/:id', isLoggedIn, function(req, res) {
+app.put('/:id', isLoggedIn, async function(req, res) {
   if (req.body.profile.images) {
     req.body.profile.images = req.body.profile.images.split(';');
   } else {
@@ -568,75 +487,50 @@ app.put('/:id', isLoggedIn, function(req, res) {
   } else {
     req.body.profile.videos = [];
   }
-  Profile.findById(req.params.id, function(err, profile) {
-    if (err) {
-      console.log(err);
-    } else {
-      var name = profile.name;
-      if (req.body.profile.name != name) {
-        req.body.profile.likes = 0;
-        req.body.profile.dislikes = 0;
-      }
-      profile.images.forEach((image) => {
-        if (!req.body.profile.images.includes(image)) {
-          delete_asset(image, 'image');
-        }
-      });
-      profile.videos.forEach((video) => {
-        if (!req.body.profile.videos.includes(video)) {
-          delete_asset(video, 'video');
-        }
-      });
-      Profile.findByIdAndUpdate(req.params.id, req.body.profile, function(err, updated_profile) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.redirect('/admin#' + String(req.params.id));
-        }
-      });
+  var profile = await Profile.findById(req.params.id);
+  var name = profile.name;
+  if (req.body.profile.name != name) {
+    req.body.profile.likes = 0;
+    req.body.profile.dislikes = 0;
+  }
+  profile.images.forEach((image) => {
+    if (!req.body.profile.images.includes(image)) {
+      delete_asset(image, 'image');
     }
   });
+  profile.videos.forEach((video) => {
+    if (!req.body.profile.videos.includes(video)) {
+      delete_asset(video, 'video');
+    }
+  });
+  await Profile.findByIdAndUpdate(req.params.id, req.body.profile);
+  res.redirect('/admin#' + String(req.params.id));
 });
 
 // update profile likes or dislikes
 app.put('/:id/thumbs/:action', function(req, res) {
-  Profile.findById(req.params.id, function(err, profile) {
-    if (err) {
-      console.log(err);
-    } else {
-      if (req.params.action == 'like') {
-        profile.likes++;
-      }
-      if (req.params.action == 'dislike') {
-        profile.dislikes++;
-      }
-      Profile.findByIdAndUpdate(req.params.id, profile, function(err, updated_profile) {
-        if (err) {
-          console.log(err);
-        }
-      });
-    }
-  });
+  var inc = {};
+  if (req.params.action == 'like') {
+    inc.likes = 1;
+  }
+  if (req.params.action == 'dislike') {
+    inc.dislikes = 1;
+  }
+  if (Object.keys(inc).length > 0) {
+    Profile.findByIdAndUpdate(req.params.id, {$inc: inc})
+      .catch(err => console.log(err));
+  }
   res.send(null);
 });
 
 // destroy profile DELETE route
-app.delete('/:id', isLoggedIn, function(req, res) {
-  Profile.findById(req.params.id, function(err, profile) {
-    if (err) {
-      console.log(err);
-    } else {
-      profile.images.forEach((image) => delete_asset(image, 'image'));
-      profile.videos.forEach((video) => delete_asset(video, 'video'));
-    }
-  });
-  Profile.findByIdAndRemove(req.params.id, function(err) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.redirect('/admin');
-    }
-  });
+app.delete('/:id', isLoggedIn, async function(req, res) {
+  var profile = await Profile.findByIdAndDelete(req.params.id);
+  if (profile) {
+    profile.images.forEach((image) => delete_asset(image, 'image'));
+    profile.videos.forEach((video) => delete_asset(video, 'video'));
+  }
+  res.redirect('/admin');
 });
 
 // show login form

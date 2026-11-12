@@ -42,32 +42,31 @@ var info_data = {
   show_notice: true
 };
 
-function seedDB(){
-  Profile.remove({}, function(err){
-    if (err) {
-      console.log(err);
-    } else {
-      addData();
-    }
-  });
+async function seedDB() {
+  try {
+    await Profile.deleteMany({});
+    await addData();
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-function addData(){
-  data.forEach(function(seed){
-    Profile.create(seed, function(err, profile){
-      if (err) {
-        console.log(err);
-      }
-    });
-  });
-}
-
-function addInfo(){
-  Info.create(info_data, function(err, info){
-    if (err){
+async function addData() {
+  for (var seed of data) {
+    try {
+      await Profile.create(seed);
+    } catch (err) {
       console.log(err);
     }
-  });
+  }
+}
+
+async function addInfo() {
+  try {
+    await Info.create(info_data);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 module.exports = seedDB;
