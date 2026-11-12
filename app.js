@@ -9,7 +9,6 @@ var express        = require('express'),
     passport       = require('passport'),
     LocalStrategy  = require('passport-local'),
     session        = require('express-session'),
-    flash          = require('connect-flash'),
     moment         = require('moment-timezone'),
     {google}       = require('googleapis'),
     geoip          = require('geoip-lite'),
@@ -34,7 +33,23 @@ var pieColors = ['#77b7c5', '#81B2AC', '#b184e8', '#e07f67', '#549abf',
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
-app.use(flash());
+// flash messages stored in the session (replaces the unmaintained connect-flash)
+app.use(function(req, res, next) {
+  req.flash = function(type, msg) {
+    var msgs = req.session.flash = req.session.flash || {};
+    if (type && msg) {
+      return (msgs[type] = msgs[type] || []).push(...[].concat(msg));
+    }
+    if (type) {
+      var arr = msgs[type] || [];
+      delete msgs[type];
+      return arr;
+    }
+    req.session.flash = {};
+    return msgs;
+  };
+  next();
+});
 app.use(cookieParser());
 
 // passport configuration
